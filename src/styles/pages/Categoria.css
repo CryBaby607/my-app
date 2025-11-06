@@ -5,30 +5,6 @@
   background-color: var(--color-background);
 }
 
-/* Header */
-.categoria-header {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
-  color: var(--color-white);
-  padding: var(--spacing-4xl) var(--spacing-lg);
-  text-align: center;
-}
-
-.header-content {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-.categoria-title {
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--spacing-md);
-}
-
-.categoria-subtitle {
-  font-size: var(--font-size-lg);
-  opacity: 0.95;
-}
-
 /* Main Container */
 .categoria-container {
   max-width: 1280px;
