@@ -11,9 +11,6 @@ export default function Home() {
           <p className="hero-subtitle">Descubre los mejores tenis y gorras de marcas reconocidas</p>
           <button className="hero-btn">Explorar Ahora</button>
         </div>
-        <div className="hero-image">
-          <div className="hero-placeholder"></div>
-        </div>
       </section>
 
       {/* Featured Categories */}
@@ -43,9 +40,8 @@ export default function Home() {
 
       <section className="featured-products">
         <h2>Productos Destacados</h2>
-          <ProductGrid />
+        <ProductGrid />
       </section>
-      
 
       {/* Promo Banner */}
       <section className="promo-banner">

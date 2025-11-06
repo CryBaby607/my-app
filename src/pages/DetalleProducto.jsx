@@ -165,9 +165,9 @@ export default function DetalleProducto() {
               className="btn-carrito"
               disabled={stockStatus === 'out'}
             >
-              🛒 Agregar al Carrito
+              Agregar al Carrito
             </button>
-            <button className="btn-favorito">♡</button>
+            
           </div>
 
           {/* Envío */}
