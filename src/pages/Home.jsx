@@ -1,5 +1,5 @@
 import '../styles/pages/Home.css';
-import ProductGrid from '../components/ProductGrid';
+// import ProductGrid from '../components/ProductGrid'; // Línea comentada
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
           <button className="hero-btn">Explorar Ahora</button>
         </div>
         <div className="hero-image">
-          <div className="hero-placeholder">👟</div>
+          <div className="hero-placeholder"></div>
         </div>
       </section>
 
@@ -41,11 +41,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* // Sección de Productos Destacados Comentada
       <section className="featured-products">
         <h2>Productos Destacados</h2>
-        <ProductGrid />
+        // Antes: <ProductGrid />
+        // <ProductGrid />
+        <p className="text-center text-lg text-gray">Cargando productos...</p>
       </section>
+      */}
 
       {/* Promo Banner */}
       <section className="promo-banner">
