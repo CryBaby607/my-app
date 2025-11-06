@@ -3,17 +3,19 @@ import { useState, useEffect } from 'react';
 import '../styles/pages/DetalleProducto.css';
 import productsData from '../data/products.json';
 import { formatPrice, calculateDiscount } from '../utils/formatters';
+import { useCart } from '../context/CartContext'; // ✅ NUEVO: Importar useCart
 
 export default function DetalleProducto() {
   const { id } = useParams();
+  const { addToCart } = useCart(); // ✅ NUEVO: Obtener función addToCart
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [addedToCart, setAddedToCart] = useState(false); // ✅ NUEVO: Estado para feedback
 
   useEffect(() => {
-    // Simular búsqueda del producto
     const foundProduct = productsData.find(p => p.id === parseInt(id));
     setProduct(foundProduct);
     setLoading(false);
@@ -23,6 +25,20 @@ export default function DetalleProducto() {
       setSelectedColor(foundProduct.colors[0]);
     }
   }, [id]);
+
+  // ✅ NUEVO: Función para agregar al carrito
+  const handleAddToCart = () => {
+    if (!selectedSize || !selectedColor) {
+      alert('Por favor selecciona talla y color');
+      return;
+    }
+
+    addToCart(product, quantity, selectedSize, selectedColor);
+    
+    // Mostrar feedback visual
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
 
   if (loading) {
     return <div className="loading-container">Cargando producto...</div>;
@@ -162,12 +178,12 @@ export default function DetalleProducto() {
           {/* Botones de Acción */}
           <div className="acciones-section">
             <button 
-              className="btn-carrito"
+              className={`btn-carrito ${addedToCart ? 'success' : ''}`}
+              onClick={handleAddToCart}
               disabled={stockStatus === 'out'}
             >
-              Agregar al Carrito
+              {addedToCart ? '✓ Agregado al carrito' : 'Agregar al Carrito'}
             </button>
-            
           </div>
 
           {/* Envío */}

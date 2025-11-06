@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import SearchBar from './SearchBar'; // ✅ NUEVO
 import '../styles/components/Navbar.css';
 
 export default function Navbar() {
   const { getTotalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false); // ✅ MEJORADO
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
   const closeMenu = () => setIsMenuOpen(false);
+  const closeSearch = () => setIsSearchOpen(false); // ✅ NUEVO
+
+  const cartCount = getTotalItems();
 
   return (
     <nav className="navbar">
@@ -30,31 +34,16 @@ export default function Navbar() {
 
       {/* Right Actions */}
       <div className="navbar-actions">
-        {/* Search */}
-        <div className="search-container">
-          <button 
-            className="search-btn"
-            onClick={toggleSearch}
-            title="Buscar"
-          >
-            🔍
-          </button>
-          {isSearchOpen && (
-            <input 
-              type="text" 
-              className="search-input"
-              placeholder="Buscar productos..."
-              autoFocus
-            />
-          )}
-        </div>
+        {/* Search Button */}
+        <button 
+          className="search-btn"
+          onClick={toggleSearch}
+          title="Buscar"
+        >
+          🔍
+        </button>
 
         {/* Cart */}
-        <a href="/carrito" className="nav-icon cart-icon" title="Carrito">
-          <span className="icon">🛒</span>
-          <span className="badge">3</span>
-        </a>
-
         <a href="/carrito" className="nav-icon cart-icon" title="Carrito">
           <span className="icon">🛒</span>
           {cartCount > 0 && <span className="badge">{cartCount}</span>}
@@ -71,6 +60,9 @@ export default function Navbar() {
           <span></span>
         </button>
       </div>
+
+      {/* Search Panel */}
+      <SearchBar isOpen={isSearchOpen} onClose={closeSearch} /> {/* ✅ NUEVO */}
     </nav>
   );
 }
