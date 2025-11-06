@@ -7,7 +7,6 @@ import { CATEGORIES_LABELS, SORT_LABELS, SORT_OPTIONS } from '../utils/constants
 export default function Categoria() {
   const { category } = useParams();
   const [sortBy, setSortBy] = useState(SORT_OPTIONS.NEWEST);
-  const [viewType, setViewType] = useState('grid'); // grid o list
 
   const categoryLabel = CATEGORIES_LABELS[category] || 'Productos';
 
@@ -101,23 +100,6 @@ export default function Categoria() {
                   <option key={key} value={key}>{label}</option>
                 ))}
               </select>
-            </div>
-
-            <div className="toolbar-right">
-              <button 
-                className={`view-toggle ${viewType === 'grid' ? 'active' : ''}`}
-                onClick={() => setViewType('grid')}
-                title="Vista de grilla"
-              >
-                ⊞
-              </button>
-              <button 
-                className={`view-toggle ${viewType === 'list' ? 'active' : ''}`}
-                onClick={() => setViewType('list')}
-                title="Vista de lista"
-              >
-                ≡
-              </button>
             </div>
           </div>
 
