@@ -2,7 +2,7 @@
 import { Routes, Route } from 'react-router-dom'; 
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+import ProtectedRoute from './components/PrivateRoute.jsx'
 
 // Páginas Públicas
 import Home from './pages/Home.jsx'
@@ -11,16 +11,19 @@ import DetalleProducto from './pages/DetalleProducto.jsx'
 import Carrito from './pages/Carrito.jsx'
 
 // Páginas de Admin
-import AdminLogin from './pages/admin/AdminLogin.jsx'
+import AdminLogin from './pages/admin/Login.jsx'
 
 
 function App() {
 
   return (
     <>
-      {/* Navbar solo se muestra en rutas públicas */}
       <Routes>
-        <Route path="/*" element={
+        {/* Rutas de Admin (sin Navbar ni Footer) */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        {/* Rutas Públicas (con Navbar y Footer) */}
+        <Route path="*" element={
           <>
             <Navbar />
             <main className="main-content with-header">
@@ -34,8 +37,6 @@ function App() {
             <Footer />
           </>
         } />
-        <Route path="/admin/login" element={<AdminLogin />} />
-
       </Routes>
     </>
   )
