@@ -182,9 +182,6 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* View Toggle Buttons - SECCIÓN ELIMINADA */
-
-
 /* Responsive */
 @media (max-width: 1024px) {
   .categoria-container {
