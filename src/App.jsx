@@ -5,6 +5,7 @@ import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
 import Categoria from './pages/Categoria.jsx'
 import DetalleProducto from './pages/DetalleProducto.jsx'
+import Carrito from './pages/Carrito.jsx'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/categoria/:category" element={<Categoria />} />
           <Route path="/producto/:id" element={<DetalleProducto />} />
+          <Route path="/carrito" element={<Carrito />} />
         </Routes>
       </main>
 

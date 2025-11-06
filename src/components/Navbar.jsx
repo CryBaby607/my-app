@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useCart } from '../context/CartContext';
 import '../styles/components/Navbar.css';
 
 export default function Navbar() {
+  const { getTotalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -53,9 +55,9 @@ export default function Navbar() {
           <span className="badge">3</span>
         </a>
 
-        {/* User */}
-        <a href="/login" className="nav-icon user-icon" title="Mi cuenta">
-          <span className="icon">👤</span>
+        <a href="/carrito" className="nav-icon cart-icon" title="Carrito">
+          <span className="icon">🛒</span>
+          {cartCount > 0 && <span className="badge">{cartCount}</span>}
         </a>
 
         {/* Mobile Menu Toggle */}
