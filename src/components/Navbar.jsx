@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import SearchBar from './SearchBar'; // ✅ NUEVO
+import SearchBar from './SearchBar';
 import '../styles/components/Navbar.css';
 
 export default function Navbar() {
   const { getTotalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false); // ✅ MEJORADO
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
   const closeMenu = () => setIsMenuOpen(false);
-  const closeSearch = () => setIsSearchOpen(false); // ✅ NUEVO
+  const closeSearch = () => setIsSearchOpen(false);
 
   const cartCount = getTotalItems();
 
@@ -43,6 +43,11 @@ export default function Navbar() {
           🔍
         </button>
 
+        {/* User Icon */}
+        <a href="/admin/login" className="nav-icon user-icon" title="Administrador">
+          <span className="icon">👤</span>
+        </a>
+
         {/* Cart */}
         <a href="/carrito" className="nav-icon cart-icon" title="Carrito">
           <span className="icon">🛒</span>
@@ -62,7 +67,7 @@ export default function Navbar() {
       </div>
 
       {/* Search Panel */}
-      <SearchBar isOpen={isSearchOpen} onClose={closeSearch} /> {/* ✅ NUEVO */}
+      <SearchBar isOpen={isSearchOpen} onClose={closeSearch} />
     </nav>
   );
 }

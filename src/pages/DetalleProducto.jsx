@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react';
 import '../styles/pages/DetalleProducto.css';
 import productsData from '../data/products.json';
 import { formatPrice, calculateDiscount } from '../utils/formatters';
-import { useCart } from '../context/CartContext'; // ✅ NUEVO: Importar useCart
+import { useCart } from '../context/CartContext'; 
 
 export default function DetalleProducto() {
   const { id } = useParams();
-  const { addToCart } = useCart(); // ✅ NUEVO: Obtener función addToCart
+  const { addToCart } = useCart(); 
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [addedToCart, setAddedToCart] = useState(false); // ✅ NUEVO: Estado para feedback
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const foundProduct = productsData.find(p => p.id === parseInt(id));
@@ -182,39 +182,21 @@ export default function DetalleProducto() {
               onClick={handleAddToCart}
               disabled={stockStatus === 'out'}
             >
-              {addedToCart ? '✓ Agregado al carrito' : 'Agregar al Carrito'}
+              {addedToCart ? 'Agregado al carrito' : 'Agregar al Carrito'}
             </button>
-          </div>
-
-          {/* Envío */}
-          <div className="envio-section">
-            <div className="envio-item">
-              <span className="envio-icon">🚚</span>
-              <span>Envío a todo México en 24-48 horas</span>
-            </div>
-            <div className="envio-item">
-              <span className="envio-icon">🔄</span>
-              <span>Cambios y devoluciones sin costo</span>
-            </div>
-            <div className="envio-item">
-              <span className="envio-icon">🛡️</span>
-              <span>Compra protegida y segura</span>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Descripción y Características */}
+      {/* Descripción */}
       <div className="producto-info-section">
         <div className="info-tabs">
-          <button className="tab-btn active">Características</button>
-          <button className="tab-btn">Especificaciones</button>
-          <button className="tab-btn">Reseñas</button>
+          <button className="tab-btn active">Descripcion</button>
         </div>
 
         <div className="tab-content">
           <div className="caracteristicas">
-            <h3>Características principales</h3>
+            <h3>Descripcion general</h3>
             <ul>
               {product.features && product.features.map((feature, idx) => (
                 <li key={idx}>{feature}</li>
