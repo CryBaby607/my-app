@@ -66,8 +66,6 @@
   text-decoration: none !important;
 }
 
-
-
 /* Right Actions */
 .navbar-actions {
   display: flex;
@@ -198,11 +196,6 @@
     display: flex;
   }
 
-  .search-input {
-    width: 150px;
-    right: -70px;
-  }
-
   .navbar-actions {
     gap: var(--spacing-sm);
   }
@@ -219,11 +212,6 @@
 
   .navbar-menu {
     padding: var(--spacing-md);
-  }
-
-  .search-input {
-    width: 120px;
-    right: -60px;
   }
 
   .search-btn {
