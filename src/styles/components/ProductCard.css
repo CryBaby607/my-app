@@ -92,28 +92,6 @@
   overflow: hidden;
 }
 
-/* Rating */
-.product-rating {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  font-size: var(--font-size-sm);
-}
-
-.stars {
-  color: #FFC107;
-  letter-spacing: 2px;
-}
-
-.rating-value {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-charcoal);
-}
-
-.reviews-count {
-  color: var(--color-medium-gray);
-}
-
 /* Precios */
 .product-prices {
   display: flex;
@@ -227,14 +205,6 @@
 
   .product-name {
     font-size: var(--font-size-sm);
-  }
-
-  .product-rating {
-    font-size: var(--font-size-xs);
-  }
-
-  .stars {
-    font-size: var(--font-size-xs);
   }
 
   .price-original {

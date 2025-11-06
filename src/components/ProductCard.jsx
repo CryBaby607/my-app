@@ -1,10 +1,16 @@
+import { useNavigate } from 'react-router-dom';
 import '../styles/components/ProductCard.css';
 import { formatPrice, calculateDiscount } from '../utils/formatters';
 
 export default function ProductCard({ product }) {
+  const navigate = useNavigate();
   const finalPrice = product.discount > 0 
     ? calculateDiscount(product.price, product.discount)
     : product.price;
+
+  const handleViewDetails = () => {
+    navigate(`/producto/${product.id}`);
+  };
 
   return (
     <div className="product-card">
@@ -14,7 +20,7 @@ export default function ProductCard({ product }) {
       )}
 
       {/* Imagen */}
-      <div className="product-image">
+      <div className="product-image" onClick={handleViewDetails} style={{ cursor: 'pointer' }}>
         <img src={product.image} alt={`${product.brand} ${product.model}`} />
       </div>
 
@@ -25,13 +31,6 @@ export default function ProductCard({ product }) {
 
         {/* Nombre */}
         <h3 className="product-name">{product.model}</h3>
-
-        {/* Rating */}
-        <div className="product-rating">
-          <span className="stars">★★★★★</span>
-          <span className="rating-value">({product.rating})</span>
-          <span className="reviews-count">{product.reviews} reviews</span>
-        </div>
 
         {/* Precios */}
         <div className="product-prices">
@@ -57,7 +56,10 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Botón */}
-        <button className="product-button">
+        <button 
+          className="product-button"
+          onClick={handleViewDetails}
+        >
           Ver detalles
         </button>
       </div>

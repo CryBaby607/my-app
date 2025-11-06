@@ -6,27 +6,6 @@
   padding: var(--spacing-2xl) var(--spacing-lg);
 }
 
-/* Breadcrumb */
-.breadcrumb {
-  max-width: 1280px;
-  margin: 0 auto var(--spacing-2xl);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  color: var(--color-medium-gray);
-}
-
-.breadcrumb a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-base);
-}
-
-.breadcrumb a:hover {
-  color: var(--color-primary-hover);
-}
-
 /* Producto Container */
 .producto-container {
   max-width: 1280px;
@@ -131,37 +110,6 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-charcoal);
   margin: 0;
-}
-
-/* Rating */
-.rating-section {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding-bottom: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.stars {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.rating-stars {
-  color: #FFC107;
-  font-size: var(--font-size-lg);
-  letter-spacing: 2px;
-}
-
-.rating-value {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-charcoal);
-}
-
-.reviews-count {
-  color: var(--color-medium-gray);
-  font-size: var(--font-size-sm);
 }
 
 /* Precio */

@@ -13,7 +13,7 @@ export default function Categoria() {
 
   return (
     <div className="categoria-page">
-        
+
       {/* Main Content */}
       <div className="categoria-container">
         {/* Sidebar - Filtros */}
@@ -57,25 +57,6 @@ export default function Categoria() {
                 <label className="checkbox-item">
                   <input type="checkbox" />
                   <span>Converse</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Filter by Rating */}
-            <div className="filter-group">
-              <h4 className="filter-subtitle">Calificación</h4>
-              <div className="checkbox-group">
-                <label className="checkbox-item">
-                  <input type="checkbox" />
-                  <span>⭐⭐⭐⭐⭐ 5 estrellas</span>
-                </label>
-                <label className="checkbox-item">
-                  <input type="checkbox" />
-                  <span>⭐⭐⭐⭐ 4+ estrellas</span>
-                </label>
-                <label className="checkbox-item">
-                  <input type="checkbox" />
-                  <span>⭐⭐⭐ 3+ estrellas</span>
                 </label>
               </div>
             </div>

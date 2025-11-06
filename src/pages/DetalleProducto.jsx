@@ -44,17 +44,6 @@ export default function DetalleProducto() {
 
   return (
     <div className="detalle-producto">
-      {/* Breadcrumb */}
-      <div className="breadcrumb">
-        <a href="/">Inicio</a>
-        <span>/</span>
-        <a href={`/categoria/${product.category}`}>
-          {product.category.replace('_', ' ').toUpperCase()}
-        </a>
-        <span>/</span>
-        <span>{product.model}</span>
-      </div>
-
       <div className="producto-container">
         {/* Imagen Principal */}
         <div className="producto-imagen-section">
@@ -80,15 +69,6 @@ export default function DetalleProducto() {
           <div className="producto-header">
             <span className="brand">{product.brand}</span>
             <h1 className="modelo">{product.model}</h1>
-          </div>
-
-          {/* Rating */}
-          <div className="rating-section">
-            <div className="stars">
-              <span className="rating-stars">★★★★★</span>
-              <span className="rating-value">{product.rating}</span>
-              <span className="reviews-count">({product.reviews} reseñas)</span>
-            </div>
           </div>
 
           {/* Precio */}
