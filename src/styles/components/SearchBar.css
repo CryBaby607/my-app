@@ -247,42 +247,6 @@
   color: var(--color-medium-gray);
 }
 
-/* Suggestions */
-.search-suggestions {
-  padding: var(--spacing-lg);
-}
-
-.search-suggestions h3 {
-  font-size: var(--font-size-base);
-  color: var(--color-charcoal);
-  margin-bottom: var(--spacing-md);
-}
-
-.suggestions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: var(--spacing-md);
-}
-
-.suggestion-btn {
-  padding: var(--spacing-md);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-charcoal);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  transition: all var(--transition-base);
-}
-
-.suggestion-btn:hover {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-}
-
 /* Help Text */
 .search-help {
   display: flex;
@@ -323,10 +287,6 @@
 
   .result-name {
     font-size: 0.75rem;
-  }
-
-  .suggestions-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
 

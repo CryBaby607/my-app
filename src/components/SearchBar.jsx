@@ -129,7 +129,7 @@ export default function SearchBar({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Results */}
+        {/* Results / Empty State */}
         {showResults ? (
           <div className="search-results" ref={resultsRef}>
             <div className="results-header">
@@ -188,62 +188,13 @@ export default function SearchBar({ isOpen, onClose }) {
               ))}
             </div>
           </div>
-        ) : searchQuery ? (
+        ) : searchQuery && ( // Solo muestra el estado vacío si hay una consulta, pero no resultados.
           <div className="search-empty">
             <div className="empty-icon">🔍</div>
             <h3>No encontramos productos</h3>
             <p>Intenta con otro término de búsqueda</p>
           </div>
-        ) : (
-          <div className="search-suggestions">
-            <h3>Búsquedas populares</h3>
-            <div className="suggestions-grid">
-              <button 
-                className="suggestion-btn"
-                onClick={() => setSearchQuery('Nike')}
-              >
-                Nike
-              </button>
-              <button 
-                className="suggestion-btn"
-                onClick={() => setSearchQuery('Adidas')}
-              >
-                Adidas
-              </button>
-              <button 
-                className="suggestion-btn"
-                onClick={() => setSearchQuery('Puma')}
-              >
-                Puma
-              </button>
-              <button 
-                className="suggestion-btn"
-                onClick={() => setSearchQuery('Converse')}
-              >
-                Converse
-              </button>
-              <button 
-                className="suggestion-btn"
-                onClick={() => setSearchQuery('Gorras')}
-              >
-                Gorras
-              </button>
-              <button 
-                className="suggestion-btn"
-                onClick={() => setSearchQuery('Descuentos')}
-              >
-                Descuentos
-              </button>
-            </div>
-          </div>
         )}
-
-        {/* Help Text */}
-        <div className="search-help">
-          <span>↑ ↓</span> Navegar
-          <span>Enter</span> Seleccionar
-          <span>Esc</span> Cerrar
-        </div>
       </div>
     </>
   );
