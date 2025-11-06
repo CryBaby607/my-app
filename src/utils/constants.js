@@ -98,36 +98,14 @@ export const PAGINATION = {
 
 // CONFIGURACIÓN DE LA APP
 export const APP_CONFIG = {
-  APP_NAME: 'SneakerStore',
-  COMPANY: 'SneakerStore MX',
-  SUPPORT_EMAIL: 'support@sneakerstore.mx',
-  WHATSAPP_NUMBER: '+525512345678',
+  APP_NAME: 'Dukicks',
+  COMPANY: 'Dukicks MX',
+  SUPPORT_EMAIL: 'support@dukicks.mx',
+  WHATSAPP_NUMBER: '+529611567875',
   MAX_CART_QUANTITY: 999,
-  TAX_RATE: 0.16, // 16% IVA México
+  TAX_RATE: 0.16,
   CURRENCY: 'MXN',
-  CURRENCY_SYMBOL: '
-
-// COLORES PARA CATEGORÍAS
-export const CATEGORY_COLORS = {
-  tenis_hombre: '#2563EB',
-  tenis_mujer: '#EC4899',
-  gorras: '#F59E0B',
-};
-
-// TIEMPOS
-export const TIMINGS = {
-  TOAST_DURATION: 3000,
-  ANIMATION_DURATION: 300,
-  DEBOUNCE_DELAY: 500,
-};
-
-// ALMACENAMIENTO LOCAL
-export const STORAGE_KEYS = {
-  CART: 'cart_items',
-  USER: 'user_data',
-  PREFERENCES: 'user_preferences',
-  AUTH_TOKEN: 'auth_token',
-};,
+  CURRENCY_SYMBOL: '$',
 };
 
 // COLORES PARA CATEGORÍAS

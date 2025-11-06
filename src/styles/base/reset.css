@@ -134,3 +134,29 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-dark-gray);
 }
+
+/* Estilos globales para App y Layout */
+html, body, #root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  min-height: calc(100vh - 70px - 200px);
+  padding-top: 0;
+  flex: 1;
+}
+
+.main-content.with-header {
+  padding-top: 0;
+}
+
+footer {
+  margin-top: auto;
+}
