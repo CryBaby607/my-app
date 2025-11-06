@@ -22,13 +22,13 @@ export default function Home() {
         <div className="categories-grid">
           <div className="category-card">
             <div className="category-icon">👕</div>
-            <h3>Tenis Hombre</h3>
+            <h3>Hombre</h3>
             <p>Colección premium para hombres</p>
             <a href="/categoria/tenis_hombre" className="category-link">Ver más →</a>
           </div>
           <div className="category-card">
             <div className="category-icon">👗</div>
-            <h3>Tenis Mujer</h3>
+            <h3>Mujer</h3>
             <p>Diseños exclusivos para mujeres</p>
             <a href="/categoria/tenis_mujer" className="category-link">Ver más →</a>
           </div>
@@ -44,7 +44,6 @@ export default function Home() {
       <section className="featured-products">
         <h2>Productos Destacados</h2>
           <ProductGrid />
-        <p className="text-center text-lg text-gray">Cargando productos...</p>
       </section>
       
 
@@ -75,11 +74,6 @@ export default function Home() {
             <div className="benefit-icon">💳</div>
             <h3>Pago Seguro</h3>
             <p>Múltiples opciones de pago seguro y confiable</p>
-          </div>
-          <div className="benefit-card">
-            <div className="benefit-icon">↩️</div>
-            <h3>Cambios Fáciles</h3>
-            <p>Devuelve o cambia tus productos sin complicaciones</p>
           </div>
         </div>
       </section>
