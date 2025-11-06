@@ -138,28 +138,6 @@
   font-weight: var(--font-weight-semibold);
 }
 
-/* Stock */
-.stock-section {
-  padding: var(--spacing-md);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.stock-available {
-  color: var(--color-success);
-  font-weight: var(--font-weight-semibold);
-}
-
-.stock-low {
-  color: var(--color-warning);
-  font-weight: var(--font-weight-semibold);
-}
-
-.stock-out {
-  color: var(--color-danger);
-  font-weight: var(--font-weight-semibold);
-}
-
 /* Opciones */
 .opcion-group {
   display: flex;

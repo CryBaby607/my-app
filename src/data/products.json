@@ -8,7 +8,7 @@
     "discount": 10,
     "stock": 15,
     "image": "https://via.placeholder.com/300x300?text=Nike+Air+Max+90",
-    "sizes": ["23", "24", "25", "26", "27", "28", "29", "30"],
+    "sizes": [ "24", "25", "26", "27", "28", "29", "30"],
     "colors": ["Negro", "Blanco", "Gris", "Rojo"]
   },
   {

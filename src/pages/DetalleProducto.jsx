@@ -102,19 +102,6 @@ export default function DetalleProducto() {
             )}
           </div>
 
-          {/* Stock Status */}
-          <div className="stock-section">
-            {stockStatus === 'available' && (
-              <p className="stock-available">✓ Disponible en stock</p>
-            )}
-            {stockStatus === 'low' && (
-              <p className="stock-low">⚠ Solo {product.stock} unidades disponibles</p>
-            )}
-            {stockStatus === 'out' && (
-              <p className="stock-out">✗ Agotado</p>
-            )}
-          </div>
-
           {/* Talla */}
           <div className="opcion-group">
             <label className="opcion-label">Talla:</label>

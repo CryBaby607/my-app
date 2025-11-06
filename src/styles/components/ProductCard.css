@@ -112,25 +112,6 @@
   color: var(--color-primary);
 }
 
-/* Stock */
-.product-stock {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  margin-top: var(--spacing-xs);
-}
-
-.stock-available {
-  color: var(--color-success);
-}
-
-.stock-low {
-  color: var(--color-warning);
-}
-
-.stock-out {
-  color: var(--color-danger);
-}
-
 /* Botón */
 .product-button {
   width: 100%;

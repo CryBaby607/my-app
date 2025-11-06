@@ -44,17 +44,6 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {/* Stock */}
-        <div className="product-stock">
-          {product.stock > 10 ? (
-            <span className="stock-available">Disponible</span>
-          ) : product.stock > 0 ? (
-            <span className="stock-low">Últimas {product.stock} unidades</span>
-          ) : (
-            <span className="stock-out">Agotado</span>
-          )}
-        </div>
-
         {/* Botón */}
         <button 
           className="product-button"
