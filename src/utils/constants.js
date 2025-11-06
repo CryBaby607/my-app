@@ -35,15 +35,6 @@ export const STOCK_THRESHOLDS = {
   LOW: 10,
 };
 
-// CLASIFICACIÓN DE PRODUCTOS
-export const RATING_STARS = {
-  EXCELLENT: 5,
-  VERY_GOOD: 4,
-  GOOD: 3,
-  FAIR: 2,
-  POOR: 1,
-};
-
 // ÓRDENES DE CLASIFICACIÓN
 export const SORT_OPTIONS = {
   NEWEST: 'newest',

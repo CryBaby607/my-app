@@ -8,8 +8,6 @@
     "discount": 10,
     "stock": 15,
     "image": "https://via.placeholder.com/300x300?text=Nike+Air+Max+90",
-    "rating": 4.8,
-    "reviews": 124,
     "sizes": ["23", "24", "25", "26", "27", "28", "29", "30"],
     "colors": ["Negro", "Blanco", "Gris", "Rojo"]
   },
@@ -22,8 +20,6 @@
     "discount": 15,
     "stock": 20,
     "image": "https://via.placeholder.com/300x300?text=Adidas+Ultraboost+22",
-    "rating": 4.7,
-    "reviews": 156,
     "sizes": ["23", "24", "25", "26", "27", "28", "29", "30"],
     "colors": ["Negro", "Blanco", "Azul", "Verde"]
   },
@@ -36,8 +32,6 @@
     "discount": 0,
     "stock": 18,
     "image": "https://via.placeholder.com/300x300?text=Puma+RS-X+Softcase",
-    "rating": 4.6,
-    "reviews": 89,
     "sizes": ["23", "24", "25", "26", "27", "28", "29", "30"],
     "colors": ["Rojo", "Negro", "Blanco", "Amarillo"]
   },
@@ -50,8 +44,6 @@
     "discount": 20,
     "stock": 25,
     "image": "https://via.placeholder.com/300x300?text=Converse+Chuck+Taylor",
-    "rating": 4.5,
-    "reviews": 203,
     "sizes": ["23", "24", "25", "26", "27", "28", "29", "30"],
     "colors": ["Blanco", "Negro", "Rojo", "Azul"]
   },
@@ -64,8 +56,6 @@
     "discount": 12,
     "stock": 30,
     "image": "https://via.placeholder.com/300x300?text=Nike+Revolution+7",
-    "rating": 4.4,
-    "reviews": 145,
     "sizes": ["23", "24", "25", "26", "27", "28", "29", "30"],
     "colors": ["Gris", "Negro", "Blanco", "Naranja"]
   },
@@ -78,8 +68,6 @@
     "discount": 8,
     "stock": 22,
     "image": "https://via.placeholder.com/300x300?text=Nike+Court+Royale",
-    "rating": 4.9,
-    "reviews": 178,
     "sizes": ["21", "22", "23", "24", "25", "26", "27", "28"],
     "colors": ["Blanco", "Rosa", "Negro", "Morado"]
   },
@@ -92,8 +80,6 @@
     "discount": 5,
     "stock": 26,
     "image": "https://via.placeholder.com/300x300?text=Adidas+Stan+Smith",
-    "rating": 4.7,
-    "reviews": 134,
     "sizes": ["21", "22", "23", "24", "25", "26", "27", "28"],
     "colors": ["Blanco", "Negro", "Rosa", "Verde"]
   },
@@ -106,8 +92,6 @@
     "discount": 18,
     "stock": 28,
     "image": "https://via.placeholder.com/300x300?text=Puma+Suede+Classic",
-    "rating": 4.6,
-    "reviews": 98,
     "sizes": ["21", "22", "23", "24", "25", "26", "27", "28"],
     "colors": ["Negro", "Blanco", "Rojo", "Azul"]
   },
@@ -120,8 +104,6 @@
     "discount": 0,
     "stock": 16,
     "image": "https://via.placeholder.com/300x300?text=Converse+One+Star+Pro",
-    "rating": 4.8,
-    "reviews": 112,
     "sizes": ["21", "22", "23", "24", "25", "26", "27", "28"],
     "colors": ["Blanco", "Negro", "Rosa", "Naranja"]
   },
@@ -134,8 +116,6 @@
     "discount": 15,
     "stock": 50,
     "image": "https://via.placeholder.com/300x300?text=Nike+Gorra+Classic",
-    "rating": 4.5,
-    "reviews": 167,
     "sizes": ["Único"],
     "colors": ["Negro"]
   },
@@ -148,8 +128,6 @@
     "discount": 10,
     "stock": 45,
     "image": "https://via.placeholder.com/300x300?text=Adidas+Baseball+Cap",
-    "rating": 4.6,
-    "reviews": 143,
     "sizes": ["Único"],
     "colors": ["Blanco"]
   },
@@ -162,8 +140,6 @@
     "discount": 20,
     "stock": 60,
     "image": "https://via.placeholder.com/300x300?text=Puma+Essential+Cap",
-    "rating": 4.4,
-    "reviews": 125,
     "sizes": ["Único"],
     "colors": ["Rojo"]
   },
@@ -176,8 +152,6 @@
     "discount": 25,
     "stock": 70,
     "image": "https://via.placeholder.com/300x300?text=Converse+Heritage+Cap",
-    "rating": 4.3,
-    "reviews": 156,
     "sizes": ["Único"],
     "colors": ["Azul"]
   },
@@ -190,8 +164,6 @@
     "discount": 12,
     "stock": 40,
     "image": "https://via.placeholder.com/300x300?text=Nike+Dri-FIT+Cap",
-    "rating": 4.7,
-    "reviews": 98,
     "sizes": ["Único"],
     "colors": ["Gris"]
   }
