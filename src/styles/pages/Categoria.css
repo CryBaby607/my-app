@@ -146,7 +146,7 @@
 }
 
 .toolbar-left,
-.toolbar-center { /* toolbar-right eliminado */
+.toolbar-center {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -211,7 +211,7 @@
   }
 
   .toolbar-left,
-  .toolbar-center { /* toolbar-right eliminado */
+  .toolbar-center {
     width: 100%;
     justify-content: space-between;
   }
@@ -239,7 +239,7 @@
   }
 
   .toolbar-left,
-  .toolbar-center { /* toolbar-right eliminado */
+  .toolbar-center {
     flex-direction: column;
     width: 100%;
     align-items: flex-start;

@@ -60,21 +60,6 @@ export default function Categoria() {
               </div>
             </div>
 
-            {/* Filter by Stock */}
-            <div className="filter-group">
-              <h4 className="filter-subtitle">Disponibilidad</h4>
-              <div className="checkbox-group">
-                <label className="checkbox-item">
-                  <input type="checkbox" defaultChecked />
-                  <span>En stock</span>
-                </label>
-                <label className="checkbox-item">
-                  <input type="checkbox" />
-                  <span>Con descuento</span>
-                </label>
-              </div>
-            </div>
-
             {/* Reset Filters */}
             <button className="reset-filters">Limpiar Filtros</button>
           </div>
