@@ -110,30 +110,6 @@
   color: var(--color-primary);
 }
 
-/* Botón */
-.product-button {
-  width: 100%;
-  padding: var(--spacing-md);
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  margin-top: auto;
-}
-
-.product-button:hover {
-  background-color: var(--color-primary-hover);
-  transform: translateY(-2px);
-}
-
-.product-button:active {
-  transform: translateY(0);
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .product-grid {
@@ -152,11 +128,6 @@
 
   .price-final {
     font-size: var(--font-size-xl);
-  }
-
-  .product-button {
-    padding: var(--spacing-sm);
-    font-size: var(--font-size-sm);
   }
 }
 
@@ -193,5 +164,4 @@
   .price-final {
     font-size: var(--font-size-lg);
   }
-
 }

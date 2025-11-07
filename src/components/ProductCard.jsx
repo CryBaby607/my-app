@@ -13,14 +13,14 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={handleViewDetails}>
       {/* Badge de descuento */}
       {product.discount > 0 && (
         <span className="product-badge">-{product.discount}%</span>
       )}
 
       {/* Imagen */}
-      <div className="product-image" onClick={handleViewDetails} style={{ cursor: 'pointer' }}>
+      <div className="product-image">
         <img src={product.image} alt={`${product.brand} ${product.model}`} />
       </div>
 
@@ -43,14 +43,6 @@ export default function ProductCard({ product }) {
             <span className="price-final">{formatPrice(product.price)}</span>
           )}
         </div>
-
-        {/* Botón */}
-        <button 
-          className="product-button"
-          onClick={handleViewDetails}
-        >
-          Ver detalles
-        </button>
       </div>
     </div>
   );
