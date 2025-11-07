@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import SearchBar from './SearchBar';
 import '../styles/components/Navbar.css';
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const { getTotalItems } = useCart();
+  const { isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -14,6 +18,15 @@ export default function Navbar() {
   const closeSearch = () => setIsSearchOpen(false);
 
   const cartCount = getTotalItems();
+
+  const handleUserIconClick = () => {
+    if (isAuthenticated) {
+      logout();
+      navigate('/');
+    } else {
+      navigate('/admin/login');
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -44,9 +57,14 @@ export default function Navbar() {
         </button>
 
         {/* User Icon */}
-        <a href="/admin/login" className="nav-icon user-icon" title="Administrador">
-          <span className="icon">👤</span>
-        </a>
+        <button 
+          className="nav-icon user-icon" 
+          onClick={handleUserIconClick}
+          title={isAuthenticated ? "Cerrar sesión" : "Ir al administrador"}
+        >
+          <span className="icon">{isAuthenticated ? '👤' : '👤'}</span>
+          {isAuthenticated && <span className="auth-badge">✓</span>}
+        </button>
 
         {/* Cart */}
         <a href="/carrito" className="nav-icon cart-icon" title="Carrito">

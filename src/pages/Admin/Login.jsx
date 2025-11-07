@@ -48,44 +48,7 @@ export default function AdminLogin() {
   return (
     <div className="admin-login-page">
       <div className="admin-login-container">
-        {/* Lado izquierdo - Información */}
-        <div className="admin-login-info">
-          <div className="admin-info-content">
-            <div className="admin-badge">🔐 ADMIN</div>
-            <h1>Panel de Administración</h1>
-            <p className="admin-info-subtitle">Dukicks - Gestión de Tienda</p>
-            
-            <div className="admin-info-features">
-              <div className="admin-feature-item">
-                <span className="admin-feature-icon">📦</span>
-                <span>Gestiona productos y categorías</span>
-              </div>
-              <div className="admin-feature-item">
-                <span className="admin-feature-icon">📊</span>
-                <span>Visualiza ventas y estadísticas</span>
-              </div>
-              <div className="admin-feature-item">
-                <span className="admin-feature-icon">🛒</span>
-                <span>Administra pedidos de clientes</span>
-              </div>
-              <div className="admin-feature-item">
-                <span className="admin-feature-icon">⚙️</span>
-                <span>Configura la tienda</span>
-              </div>
-            </div>
-
-            <div className="admin-info-note">
-              <span className="admin-note-icon">ℹ️</span>
-              <p>Este área es exclusiva para administradores. Si no eres administrador, regresa a la tienda principal.</p>
-            </div>
-
-            <a href="/" className="btn-back-store">
-              ← Volver a la tienda
-            </a>
-          </div>
-        </div>
-
-        {/* Lado derecho - Formulario */}
+        {/* Formulario */}
         <div className="admin-login-form-container">
           <div className="admin-form-header">
             <h2>Inicia Sesión</h2>
