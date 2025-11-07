@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ADMIN_CREDENTIALS } from '../../utils/constants';
 import '../../styles/pages/Login.css';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  
   const { loginAdmin, isLoading, error, setError } = useAuth();
   
   const [formData, setFormData] = useState({
@@ -13,7 +13,6 @@ export default function AdminLogin() {
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showCredentials, setShowCredentials] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,17 +36,10 @@ export default function AdminLogin() {
     }
   };
 
-  const handleFillDemo = () => {
-    setFormData({
-      email: ADMIN_CREDENTIALS.email,
-      password: ADMIN_CREDENTIALS.password,
-    });
-    setShowCredentials(false);
-  };
-
   return (
     <div className="admin-login-page">
       <div className="admin-login-container">
+
         {/* Formulario */}
         <div className="admin-login-form-container">
           <div className="admin-form-header">
@@ -123,39 +115,6 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="admin-demo-section">
-            <button
-              type="button"
-              className="admin-btn-show-demo"
-              onClick={() => setShowCredentials(!showCredentials)}
-              disabled={isLoading}
-            >
-              {showCredentials ? '✕ Ocultar credenciales' : '❓ Credenciales de prueba'}
-            </button>
-
-            {showCredentials && (
-              <div className="admin-demo-credentials">
-                <div className="admin-credential-item">
-                  <span className="admin-label">Email:</span>
-                  <code>{ADMIN_CREDENTIALS.email}</code>
-                </div>
-                <div className="admin-credential-item">
-                  <span className="admin-label">Contraseña:</span>
-                  <code>{ADMIN_CREDENTIALS.password}</code>
-                </div>
-                <button
-                  type="button"
-                  className="admin-btn-fill-demo"
-                  onClick={handleFillDemo}
-                  disabled={isLoading}
-                >
-                  Llenar formulario
-                </button>
-              </div>
-            )}
-          </div>
 
           {/* Seguridad */}
           <p className="admin-form-security">

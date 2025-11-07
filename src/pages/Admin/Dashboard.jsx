@@ -195,25 +195,6 @@ export default function Dashboard() {
             </table>
           </div>
         </section>
-
-        {/* Additional Info */}
-        <section className="dashboard-section">
-          <div className="info-cards">
-            <div className="info-card">
-              <h3>🏷️ Productos con Descuento</h3>
-              <p className="info-number">{productsWithDiscount}</p>
-              <span className="info-description">Productos actualmente en oferta</span>
-            </div>
-
-            <div className="info-card">
-              <h3>🌐 Tienda Pública</h3>
-              <a href="/" className="info-link" target="_blank" rel="noopener noreferrer">
-                Ver Tienda →
-              </a>
-              <span className="info-description">Abrir en nueva pestaña</span>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   );
