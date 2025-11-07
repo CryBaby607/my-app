@@ -1,11 +1,25 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import productsData from '../../data/products.json';
+import { useProducts } from '../../context/ProductContext';
+import ProductModal from '../../components/ProductModal';
+import ConfirmModal from '../../components/ConfirmModal';
 import '../../styles/pages/Dashboard.css';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+
+  // Estados para modales
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Estado para mensajes de éxito
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleLogout = () => {
     logout();
@@ -13,19 +27,80 @@ export default function Dashboard() {
   };
 
   // Calcular estadísticas
-  const totalProducts = productsData.length;
-  const totalStock = productsData.reduce((acc, product) => acc + product.stock, 0);
-  const lowStockProducts = productsData.filter(p => p.stock > 0 && p.stock <= 10).length;
-  const outOfStockProducts = productsData.filter(p => p.stock === 0).length;
+  const totalProducts = products.length;
+  const totalStock = products.reduce((acc, product) => acc + product.stock, 0);
+  const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 10).length;
+  const outOfStockProducts = products.filter(p => p.stock === 0).length;
 
   // Productos con descuento
-  const productsWithDiscount = productsData.filter(p => p.discount > 0).length;
+  const productsWithDiscount = products.filter(p => p.discount > 0).length;
 
   // Categorías
   const categories = {
-    tenis_hombre: productsData.filter(p => p.category === 'tenis_hombre').length,
-    tenis_mujer: productsData.filter(p => p.category === 'tenis_mujer').length,
-    gorras: productsData.filter(p => p.category === 'gorras').length,
+    tenis_hombre: products.filter(p => p.category === 'tenis_hombre').length,
+    tenis_mujer: products.filter(p => p.category === 'tenis_mujer').length,
+    gorras: products.filter(p => p.category === 'gorras').length,
+  };
+
+  // Mostrar mensaje de éxito temporal
+  const showSuccessMessage = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  // Handlers para agregar producto
+  const handleOpenAddModal = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const handleAddProduct = (productData) => {
+    addProduct(productData);
+    handleCloseAddModal();
+    showSuccessMessage('✓ Producto agregado exitosamente');
+  };
+
+  // Handlers para editar producto
+  const handleOpenEditModal = (product) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleUpdateProduct = (productData) => {
+    updateProduct(selectedProduct.id, productData);
+    handleCloseEditModal();
+    showSuccessMessage('✓ Producto actualizado exitosamente');
+  };
+
+  // Handlers para eliminar producto
+  const handleOpenDeleteModal = (product) => {
+    setSelectedProduct(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleDeleteProduct = async () => {
+    setIsDeleting(true);
+    
+    // Simular delay de red
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    deleteProduct(selectedProduct.id);
+    setIsDeleting(false);
+    handleCloseDeleteModal();
+    showSuccessMessage('✓ Producto eliminado exitosamente');
   };
 
   return (
@@ -38,12 +113,19 @@ export default function Dashboard() {
             <p className="dashboard-subtitle">Bienvenido, {user?.email}</p>
           </div>
           <button className="btn-logout" onClick={handleLogout}>
-              Cerrar Sesión
+            Cerrar Sesión
           </button>
         </div>
       </header>
 
       <div className="dashboard-container">
+        {/* Mensaje de Éxito */}
+        {successMessage && (
+          <div className="success-toast">
+            {successMessage}
+          </div>
+        )}
+
         {/* Stats Cards */}
         <section className="dashboard-stats">
           <div className="stat-card stat-card-primary">
@@ -87,22 +169,22 @@ export default function Dashboard() {
         <section className="dashboard-section">
           <h2 className="section-title">Acciones Rápidas</h2>
           <div className="quick-actions">
-            <button className="action-card" onClick={() => alert('Funcionalidad en desarrollo')}>
+            <button className="action-card" onClick={handleOpenAddModal}>
               <span className="action-icon">➕</span>
               <span className="action-title">Agregar Producto</span>
               <span className="action-description">Añadir un nuevo producto al catálogo</span>
             </button>
 
-            <button className="action-card" onClick={() => alert('Funcionalidad en desarrollo')}>
-              <span className="action-icon">📝</span>
-              <span className="action-title">Editar Productos</span>
-              <span className="action-description">Modificar productos existentes</span>
+            <button className="action-card" onClick={() => navigate('/')}>
+              <span className="action-icon">👁️</span>
+              <span className="action-title">Ver Tienda</span>
+              <span className="action-description">Ir a la página pública</span>
             </button>
 
-            <button className="action-card" onClick={() => alert('Funcionalidad en desarrollo')}>
-              <span className="action-icon">🗑️</span>
-              <span className="action-title">Eliminar Productos</span>
-              <span className="action-description">Remover productos del catálogo</span>
+            <button className="action-card" onClick={() => window.location.reload()}>
+              <span className="action-icon">🔄</span>
+              <span className="action-title">Refrescar Datos</span>
+              <span className="action-description">Actualizar información</span>
             </button>
           </div>
         </section>
@@ -137,9 +219,13 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Recent Products */}
+        {/* Products Table */}
         <section className="dashboard-section">
-          <h2 className="section-title">Productos Recientes</h2>
+          <div className="section-header">
+            <h2 className="section-title">Todos los Productos</h2>
+            <span className="product-count">{totalProducts} productos</span>
+          </div>
+          
           <div className="products-table">
             <table>
               <thead>
@@ -151,10 +237,11 @@ export default function Dashboard() {
                   <th>Stock</th>
                   <th>Precio</th>
                   <th>Descuento</th>
+                  <th className="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {productsData.slice(0, 5).map(product => (
+                {products.map(product => (
                   <tr key={product.id}>
                     <td>#{product.id}</td>
                     <td className="product-name">{product.model}</td>
@@ -183,6 +270,24 @@ export default function Dashboard() {
                         <span className="no-discount">—</span>
                       )}
                     </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button 
+                          className="btn-action btn-edit"
+                          onClick={() => handleOpenEditModal(product)}
+                          title="Editar producto"
+                        >
+                          ✏️
+                        </button>
+                        <button 
+                          className="btn-action btn-delete"
+                          onClick={() => handleOpenDeleteModal(product)}
+                          title="Eliminar producto"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -190,6 +295,32 @@ export default function Dashboard() {
           </div>
         </section>
       </div>
+
+      {/* Modales */}
+      <ProductModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onSave={handleAddProduct}
+      />
+
+      <ProductModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSave={handleUpdateProduct}
+        product={selectedProduct}
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleDeleteProduct}
+        title="¿Eliminar producto?"
+        message={`¿Estás seguro de que deseas eliminar "${selectedProduct?.model}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        isLoading={isDeleting}
+        variant="danger"
+      />
     </div>
   );
 }

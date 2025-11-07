@@ -124,6 +124,7 @@ export const STORAGE_KEYS = {
   PREFERENCES: 'user_preferences',
   AUTH_TOKEN: 'auth_token',
   ADMIN_SESSION: 'admin_session',
+  PRODUCTS: 'products_data',
 };
 
 // CREDENCIALES DE ADMINISTRADOR (HARDCODED - SOLO DESARROLLO)

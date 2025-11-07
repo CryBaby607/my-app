@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
+import { ProductProvider } from './context/ProductContext' // ← AGREGAR
 
 // Importar estilos base en orden
 import './styles/base/reset.css'
@@ -17,9 +18,11 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
+        <ProductProvider> {/* ← AGREGAR */}
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </ProductProvider> {/* ← AGREGAR */}
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
