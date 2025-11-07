@@ -7,7 +7,8 @@ export const ROUTES = {
   CATEGORIA: '/categoria/:category',
   PRODUCTO: '/producto/:id',
   CARRITO: '/carrito',
-  DASHBOARD: '/dashboard',
+  ADMIN_LOGIN: '/admin/login',
+  ADMIN_DASHBOARD: '/admin/dashboard',
   NOT_FOUND: '*',
 };
 
@@ -66,13 +67,16 @@ export const MESSAGES = {
     PRODUCT_REMOVED: 'Producto removido del carrito',
     PURCHASE_COMPLETE: 'Compra completada exitosamente',
     LOGIN_SUCCESS: 'Sesión iniciada correctamente',
+    LOGOUT_SUCCESS: 'Sesión cerrada correctamente',
   },
   ERROR: {
     PRODUCT_NOT_FOUND: 'Producto no encontrado',
     INVALID_EMAIL: 'Email inválido',
     INVALID_PASSWORD: 'Contraseña inválida',
+    INVALID_CREDENTIALS: 'Credenciales incorrectas',
     STOCK_UNAVAILABLE: 'Producto sin disponibilidad',
     GENERIC_ERROR: 'Algo salió mal, intenta de nuevo',
+    UNAUTHORIZED: 'No tienes autorización para acceder',
   },
   INFO: {
     LOADING: 'Cargando...',
@@ -119,4 +123,17 @@ export const STORAGE_KEYS = {
   USER: 'user_data',
   PREFERENCES: 'user_preferences',
   AUTH_TOKEN: 'auth_token',
+  ADMIN_SESSION: 'admin_session',
+};
+
+// CREDENCIALES DE ADMINISTRADOR (HARDCODED - SOLO DESARROLLO)
+export const ADMIN_CREDENTIALS = {
+  email: 'admin@dukicks.mx',
+  password: 'admin123',
+};
+
+// ROLES DE USUARIO
+export const USER_ROLES = {
+  ADMIN: 'admin',
+  CUSTOMER: 'customer',
 };
