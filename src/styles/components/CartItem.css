@@ -1,5 +1,3 @@
-/* CartItem Component Styles */
-
 .cart-item {
   display: flex;
   gap: var(--spacing-lg);

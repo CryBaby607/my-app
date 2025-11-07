@@ -132,22 +132,6 @@ export default function Carrito() {
               >
                 Continuar comprando
               </button>
-
-              {/* Beneficios */}
-              <div className="summary-benefits">
-                <div className="benefit-item">
-                  <span className="benefit-icon">🚚</span>
-                  <span className="benefit-text">Envío gratis</span>
-                </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">🔄</span>
-                  <span className="benefit-text">Devoluciones fáciles</span>
-                </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">🛡️</span>
-                  <span className="benefit-text">Compra segura</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,3 @@
-/* DetalleProducto Page Styles */
-
 .detalle-producto {
   min-height: calc(100vh - 70px);
   background-color: var(--color-background);
