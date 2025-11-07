@@ -56,16 +56,6 @@ export default function Navbar() {
           🔍
         </button>
 
-        {/* User Icon */}
-        <button 
-          className="nav-icon user-icon" 
-          onClick={handleUserIconClick}
-          title={isAuthenticated ? "Cerrar sesión" : "Ir al administrador"}
-        >
-          <span className="icon">{isAuthenticated ? '👤' : '👤'}</span>
-          {isAuthenticated && <span className="auth-badge">✓</span>}
-        </button>
-
         {/* Cart */}
         <a href="/carrito" className="nav-icon cart-icon" title="Carrito">
           <span className="icon">🛒</span>
