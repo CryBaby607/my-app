@@ -38,7 +38,7 @@ export default function Dashboard() {
             <p className="dashboard-subtitle">Bienvenido, {user?.email}</p>
           </div>
           <button className="btn-logout" onClick={handleLogout}>
-            🚪 Cerrar Sesión
+              Cerrar Sesión
           </button>
         </div>
       </header>
@@ -103,12 +103,6 @@ export default function Dashboard() {
               <span className="action-icon">🗑️</span>
               <span className="action-title">Eliminar Productos</span>
               <span className="action-description">Remover productos del catálogo</span>
-            </button>
-
-            <button className="action-card" onClick={() => alert('Funcionalidad en desarrollo')}>
-              <span className="action-icon">📊</span>
-              <span className="action-title">Ver Reportes</span>
-              <span className="action-description">Estadísticas y análisis de ventas</span>
             </button>
           </div>
         </section>
