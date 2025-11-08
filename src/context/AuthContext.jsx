@@ -1,7 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { STORAGE_KEYS, ADMIN_CREDENTIALS, USER_ROLES, MESSAGES } from '../utils/constants';
+import { ADMIN_CREDENTIALS, USER_ROLES, MESSAGES } from '../utils/constants';
 
 const AuthContext = createContext();
+
+// Clave para sessionStorage
+const SESSION_KEY = 'admin_session';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -17,10 +20,10 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cargar sesión del localStorage al iniciar
+  // Cargar sesión del sessionStorage al iniciar (solo persiste durante la sesión del navegador)
   useEffect(() => {
     try {
-      const savedSession = localStorage.getItem(STORAGE_KEYS.ADMIN_SESSION);
+      const savedSession = sessionStorage.getItem(SESSION_KEY);
       if (savedSession) {
         const session = JSON.parse(savedSession);
         
@@ -30,21 +33,21 @@ export const AuthProvider = ({ children }) => {
           setIsAuthenticated(true);
         } else {
           // Sesión inválida, limpiar
-          localStorage.removeItem(STORAGE_KEYS.ADMIN_SESSION);
+          sessionStorage.removeItem(SESSION_KEY);
         }
       }
     } catch (error) {
       console.error('Error cargando sesión:', error);
-      localStorage.removeItem(STORAGE_KEYS.ADMIN_SESSION);
+      sessionStorage.removeItem(SESSION_KEY);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Guardar sesión en localStorage cada vez que cambie el usuario
+  // Guardar sesión en sessionStorage cada vez que cambie el usuario
   useEffect(() => {
     if (!isLoading && user) {
-      localStorage.setItem(STORAGE_KEYS.ADMIN_SESSION, JSON.stringify(user));
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
     }
   }, [user, isLoading]);
 
@@ -99,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     setError(null);
-    localStorage.removeItem(STORAGE_KEYS.ADMIN_SESSION);
+    sessionStorage.removeItem(SESSION_KEY);
   };
 
   // Verificar si el usuario es administrador

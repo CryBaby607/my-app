@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import productsDataInitial from '../data/products.json';
-import { STORAGE_KEYS } from '../utils/constants';
 
 const ProductContext = createContext();
+
+// Clave para sessionStorage
+const PRODUCTS_SESSION_KEY = 'products_data';
 
 export const useProducts = () => {
   const context = useContext(ProductContext);
@@ -16,16 +18,16 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar productos del localStorage al iniciar
+  // Cargar productos del sessionStorage al iniciar
   useEffect(() => {
     try {
-      const savedProducts = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+      const savedProducts = sessionStorage.getItem(PRODUCTS_SESSION_KEY);
       if (savedProducts) {
         setProducts(JSON.parse(savedProducts));
       } else {
         // Si no hay productos guardados, usar los del JSON inicial
         setProducts(productsDataInitial);
-        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(productsDataInitial));
+        sessionStorage.setItem(PRODUCTS_SESSION_KEY, JSON.stringify(productsDataInitial));
       }
     } catch (error) {
       console.error('Error cargando productos:', error);
@@ -35,10 +37,10 @@ export const ProductProvider = ({ children }) => {
     }
   }, []);
 
-  // Guardar productos en localStorage cada vez que cambien
+  // Guardar productos en sessionStorage cada vez que cambien
   useEffect(() => {
     if (!isLoading && products.length > 0) {
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+      sessionStorage.setItem(PRODUCTS_SESSION_KEY, JSON.stringify(products));
     }
   }, [products, isLoading]);
 
@@ -89,7 +91,7 @@ export const ProductProvider = ({ children }) => {
   // Restaurar productos originales
   const resetProducts = () => {
     setProducts(productsDataInitial);
-    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(productsDataInitial));
+    sessionStorage.setItem(PRODUCTS_SESSION_KEY, JSON.stringify(productsDataInitial));
   };
 
   const value = {

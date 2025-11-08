@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { STORAGE_KEYS } from '../utils/constants';
 
 const CartContext = createContext();
+
+// Clave para sessionStorage
+const CART_SESSION_KEY = 'cart_items';
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -15,10 +17,10 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar carrito del localStorage al iniciar
+  // Cargar carrito del sessionStorage al iniciar
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem(STORAGE_KEYS.CART);
+      const savedCart = sessionStorage.getItem(CART_SESSION_KEY);
       if (savedCart) {
         setCartItems(JSON.parse(savedCart));
       }
@@ -29,10 +31,10 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Guardar carrito en localStorage cada vez que cambie
+  // Guardar carrito en sessionStorage cada vez que cambie
   useEffect(() => {
     if (!isLoading) {
-      localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cartItems));
+      sessionStorage.setItem(CART_SESSION_KEY, JSON.stringify(cartItems));
     }
   }, [cartItems, isLoading]);
 
