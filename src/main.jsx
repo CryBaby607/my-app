@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
-import { ProductProvider } from './context/ProductContext' // ← AGREGAR
+import { ProductProvider } from './context/ProductContext'
+
+// Configuración de Font Awesome
+import './config/fontawesome'
 
 // Importar estilos base en orden
 import './styles/base/reset.css'
@@ -18,11 +21,11 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ProductProvider> {/* ← AGREGAR */}
+        <ProductProvider>
           <CartProvider>
             <App />
           </CartProvider>
-        </ProductProvider> {/* ← AGREGAR */}
+        </ProductProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

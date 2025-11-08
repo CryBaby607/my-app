@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faShoppingCart, faBars, faTimes, faUser } from '@fortawesome/free-solid-svg-icons';
 import SearchBar from './SearchBar';
 import '../styles/components/Navbar.css';
 
@@ -39,10 +41,18 @@ export default function Navbar() {
 
       {/* Menu Links - Center */}
       <div className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
-        <a href="/" className="nav-link" onClick={closeMenu}>Inicio</a>
-        <a href="/categoria/tenis_hombre" className="nav-link" onClick={closeMenu}>Hombre</a>
-        <a href="/categoria/tenis_mujer" className="nav-link" onClick={closeMenu}>Mujer</a>
-        <a href="/categoria/gorras" className="nav-link" onClick={closeMenu}>Gorras</a>
+        <a href="/" className="nav-link" onClick={closeMenu}>
+          Inicio
+        </a>
+        <a href="/categoria/tenis_hombre" className="nav-link" onClick={closeMenu}>
+          Hombre
+        </a>
+        <a href="/categoria/tenis_mujer" className="nav-link" onClick={closeMenu}>
+          Mujer
+        </a>
+        <a href="/categoria/gorras" className="nav-link" onClick={closeMenu}>
+          Gorras
+        </a>
       </div>
 
       {/* Right Actions */}
@@ -52,13 +62,14 @@ export default function Navbar() {
           className="search-btn"
           onClick={toggleSearch}
           title="Buscar"
+          aria-label="Abrir búsqueda"
         >
-          🔍
+          <FontAwesomeIcon icon={faSearch} />
         </button>
 
         {/* Cart */}
         <a href="/carrito" className="nav-icon cart-icon" title="Carrito">
-          <span className="icon">🛒</span>
+          <FontAwesomeIcon icon={faShoppingCart} />
           {cartCount > 0 && <span className="badge">{cartCount}</span>}
         </a>
 
@@ -67,10 +78,10 @@ export default function Navbar() {
           className={`menu-toggle ${isMenuOpen ? 'active' : ''}`}
           onClick={toggleMenu}
           title="Menú"
+          aria-label="Abrir menú"
+          aria-expanded={isMenuOpen}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} />
         </button>
       </div>
 

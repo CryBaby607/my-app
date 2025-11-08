@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import productsData from '../data/products.json';
 import { formatPrice } from '../utils/formatters';
 import '../styles/components/SearchBar.css';
@@ -104,7 +106,7 @@ export default function SearchBar({ isOpen, onClose }) {
       <div className="search-panel">
         {/* Input */}
         <div className="search-input-wrapper">
-          <span className="search-icon">🔍</span>
+          <FontAwesomeIcon icon={faSearch} className="search-icon" />
           <input
             ref={searchInputRef}
             type="text"
@@ -123,8 +125,9 @@ export default function SearchBar({ isOpen, onClose }) {
                 searchInputRef.current?.focus();
               }}
               title="Limpiar búsqueda"
+              aria-label="Limpiar búsqueda"
             >
-              ✕
+              <FontAwesomeIcon icon={faTimes} />
             </button>
           )}
         </div>
@@ -188,9 +191,11 @@ export default function SearchBar({ isOpen, onClose }) {
               ))}
             </div>
           </div>
-        ) : searchQuery && ( // Solo muestra el estado vacío si hay una consulta, pero no resultados.
+        ) : searchQuery && (
           <div className="search-empty">
-            <div className="empty-icon">🔍</div>
+            <div className="empty-icon">
+              <FontAwesomeIcon icon={faSearch} />
+            </div>
             <h3>No encontramos productos</h3>
             <p>Intenta con otro término de búsqueda</p>
           </div>
