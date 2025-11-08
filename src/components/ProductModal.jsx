@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import '../../styles/components/ProductModal.css';
+import '../styles/components/ProductModal.css';
 
 export default function ProductModal({ isOpen, onClose, onSave, product = null }) {
   const isEditing = !!product;

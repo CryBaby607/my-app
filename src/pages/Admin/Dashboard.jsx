@@ -32,16 +32,6 @@ export default function Dashboard() {
   const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 10).length;
   const outOfStockProducts = products.filter(p => p.stock === 0).length;
 
-  // Productos con descuento
-  const productsWithDiscount = products.filter(p => p.discount > 0).length;
-
-  // Categorías
-  const categories = {
-    tenis_hombre: products.filter(p => p.category === 'tenis_hombre').length,
-    tenis_mujer: products.filter(p => p.category === 'tenis_mujer').length,
-    gorras: products.filter(p => p.category === 'gorras').length,
-  };
-
   // Mostrar mensaje de éxito temporal
   const showSuccessMessage = (message) => {
     setSuccessMessage(message);
@@ -126,104 +116,17 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Stats Cards */}
-        <section className="dashboard-stats">
-          <div className="stat-card stat-card-primary">
-            <div className="stat-icon">📦</div>
-            <div className="stat-content">
-              <h3>Total Productos</h3>
-              <p className="stat-number">{totalProducts}</p>
-              <span className="stat-label">En catálogo</span>
-            </div>
-          </div>
-
-          <div className="stat-card stat-card-success">
-            <div className="stat-icon">✓</div>
-            <div className="stat-content">
-              <h3>Stock Total</h3>
-              <p className="stat-number">{totalStock}</p>
-              <span className="stat-label">Unidades disponibles</span>
-            </div>
-          </div>
-
-          <div className="stat-card stat-card-warning">
-            <div className="stat-icon">⚠️</div>
-            <div className="stat-content">
-              <h3>Stock Bajo</h3>
-              <p className="stat-number">{lowStockProducts}</p>
-              <span className="stat-label">Requieren atención</span>
-            </div>
-          </div>
-
-          <div className="stat-card stat-card-danger">
-            <div className="stat-icon">✕</div>
-            <div className="stat-content">
-              <h3>Agotados</h3>
-              <p className="stat-number">{outOfStockProducts}</p>
-              <span className="stat-label">Sin stock</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Quick Actions */}
-        <section className="dashboard-section">
-          <h2 className="section-title">Acciones Rápidas</h2>
-          <div className="quick-actions">
-            <button className="action-card" onClick={handleOpenAddModal}>
-              <span className="action-icon">➕</span>
-              <span className="action-title">Agregar Producto</span>
-              <span className="action-description">Añadir un nuevo producto al catálogo</span>
-            </button>
-
-            <button className="action-card" onClick={() => navigate('/')}>
-              <span className="action-icon">👁️</span>
-              <span className="action-title">Ver Tienda</span>
-              <span className="action-description">Ir a la página pública</span>
-            </button>
-
-            <button className="action-card" onClick={() => window.location.reload()}>
-              <span className="action-icon">🔄</span>
-              <span className="action-title">Refrescar Datos</span>
-              <span className="action-description">Actualizar información</span>
-            </button>
-          </div>
-        </section>
-
-        {/* Categories Overview */}
-        <section className="dashboard-section">
-          <h2 className="section-title">Productos por Categoría</h2>
-          <div className="categories-overview">
-            <div className="category-item">
-              <div className="category-header">
-                <span className="category-icon">👕</span>
-                <h3>Tenis Hombre</h3>
-              </div>
-              <p className="category-count">{categories.tenis_hombre} productos</p>
-            </div>
-
-            <div className="category-item">
-              <div className="category-header">
-                <span className="category-icon">👗</span>
-                <h3>Tenis Mujer</h3>
-              </div>
-              <p className="category-count">{categories.tenis_mujer} productos</p>
-            </div>
-
-            <div className="category-item">
-              <div className="category-header">
-                <span className="category-icon">🧢</span>
-                <h3>Gorras</h3>
-              </div>
-              <p className="category-count">{categories.gorras} productos</p>
-            </div>
-          </div>
-        </section>
-
         {/* Products Table */}
         <section className="dashboard-section">
           <div className="section-header">
-            <h2 className="section-title">Todos los Productos</h2>
-            <span className="product-count">{totalProducts} productos</span>
+            <div className="header-left">
+              <h2 className="section-title">Todos los Productos</h2>
+              <span className="product-count">{products.length} productos</span>
+            </div>
+            <button className="btn-add-product" onClick={handleOpenAddModal}>
+              <span className="btn-icon">➕</span>
+              <span className="btn-text">Agregar Producto</span>
+            </button>
           </div>
           
           <div className="products-table">
