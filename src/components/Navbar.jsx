@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faShoppingCart, faBars, faTimes, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faShoppingCart, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import SearchBar from './SearchBar';
 import '../styles/components/Navbar.css';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { getTotalItems } = useCart();
-  const { isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -20,15 +18,6 @@ export default function Navbar() {
   const closeSearch = () => setIsSearchOpen(false);
 
   const cartCount = getTotalItems();
-
-  const handleUserIconClick = () => {
-    if (isAuthenticated) {
-      logout();
-      navigate('/');
-    } else {
-      navigate('/admin/login');
-    }
-  };
 
   return (
     <nav className="navbar">
@@ -41,18 +30,10 @@ export default function Navbar() {
 
       {/* Menu Links - Center */}
       <div className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
-        <a href="/" className="nav-link" onClick={closeMenu}>
-          Inicio
-        </a>
-        <a href="/categoria/tenis_hombre" className="nav-link" onClick={closeMenu}>
-          Hombre
-        </a>
-        <a href="/categoria/tenis_mujer" className="nav-link" onClick={closeMenu}>
-          Mujer
-        </a>
-        <a href="/categoria/gorras" className="nav-link" onClick={closeMenu}>
-          Gorras
-        </a>
+        <a href="/" className="nav-link" onClick={closeMenu}>Inicio</a>
+        <a href="/categoria/tenis_hombre" className="nav-link" onClick={closeMenu}>Hombre</a>
+        <a href="/categoria/tenis_mujer" className="nav-link" onClick={closeMenu}>Mujer</a>
+        <a href="/categoria/gorras" className="nav-link" onClick={closeMenu}>Gorras</a>
       </div>
 
       {/* Right Actions */}

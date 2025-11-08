@@ -46,11 +46,8 @@ export const SORT_OPTIONS = {
 };
 
 export const SORT_LABELS = {
-  newest: 'Más nuevo',
   price_low_high: 'Precio: menor a mayor',
   price_high_low: 'Precio: mayor a menor',
-  most_rated: 'Mejor calificado',
-  trending: 'Tendencia',
 };
 
 // VALIDACIÓN
