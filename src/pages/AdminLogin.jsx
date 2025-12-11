@@ -80,10 +80,6 @@ const AdminLogin = () => {
     }
   };
 
-  const handleForgotPassword = () => {
-    navigate('/admin/forgot-password');
-  };
-
   const handleDemoLogin = (role) => {
     const demoCredentials = {
       'superadmin': { email: 'superadmin@dukicks.com', password: 'admin123' },
@@ -110,11 +106,6 @@ const AdminLogin = () => {
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl border border-gray-700 p-8">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-14 h-14 bg-gradient-to-r from-dukicks-blue to-blue-600 rounded-full flex items-center justify-center">
-                <i className="fas fa-lock text-white text-2xl"></i>
-              </div>
-            </div>
             <h1 className="text-3xl font-bold text-white mb-2">
               <span className="text-white">DU</span>
               <span className="text-dukicks-blue">KICKS</span>
@@ -136,7 +127,6 @@ const AdminLogin = () => {
 
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-2">
-                <i className="fas fa-envelope mr-2"></i>
                 Correo Electrónico
               </label>
               <div className="relative">
@@ -165,7 +155,6 @@ const AdminLogin = () => {
 
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-2">
-                <i className="fas fa-lock mr-2"></i>
                 Contraseña
               </label>
               <div className="relative">
@@ -194,7 +183,8 @@ const AdminLogin = () => {
               )}
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* Checkbox Recordarme */}
+            <div className="flex items-center mb-6">
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -209,14 +199,6 @@ const AdminLogin = () => {
                   Recordarme
                 </label>
               </div>
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                className="text-dukicks-blue hover:text-blue-400 text-sm font-medium transition-colors"
-                disabled={isLoading}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
             </div>
 
             <button
@@ -272,24 +254,6 @@ const AdminLogin = () => {
               <i className="fas fa-store mr-2"></i>
               Volver a la tienda pública
             </Link>
-          </div>
-        </div>
-
-        {/* Security Info */}
-        <div className="mt-4 text-center">
-          <div className="flex items-center justify-center space-x-4 text-gray-500 text-sm">
-            <div className="flex items-center">
-              <i className="fas fa-shield-alt mr-1"></i>
-              <span>Seguro</span>
-            </div>
-            <div className="flex items-center">
-              <i className="fas fa-encryption mr-1"></i>
-              <span>Encriptado</span>
-            </div>
-            <div className="flex items-center">
-              <i className="fas fa-history mr-1"></i>
-              <span>Último acceso: 5 min</span>
-            </div>
           </div>
         </div>
       </motion.div>

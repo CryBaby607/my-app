@@ -4,8 +4,6 @@ import './index.css';
 
 // Importa los componentes de administración
 import AdminLogin from './pages/AdminLogin';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -43,8 +41,6 @@ function App() {
         
         {/* Rutas de autenticación para administradores */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/forgot-password" element={<ForgotPassword />} />
-        <Route path="/admin/reset-password" element={<ResetPassword />} />
         
         {/* Rutas protegidas del panel de administración */}
         <Route path="/admin" element={
