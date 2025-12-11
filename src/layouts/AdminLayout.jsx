@@ -104,8 +104,6 @@ const AdminLayout = () => {
             </Link>
           </div>
 
-          {/* User Info (Sección eliminada) */}
-
           {/* Navigation */}
           <nav className="flex-1 p-4 overflow-y-auto custom-scrollbar">
             <ul className="space-y-2">

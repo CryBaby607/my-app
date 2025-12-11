@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import CartDropdown from './CartDropdown';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  // Eliminamos el estado isCartOpen ya que no usamos el dropdown
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [cartItems, setCartItems] = useState(3);
   const [activeLink, setActiveLink] = useState('Inicio');
 
   const navLinks = [
-    { name: 'Inicio', icon: 'fa-home' },
-    { name: 'Hombres', icon: 'fa-male' },
-    { name: 'Mujer', icon: 'fa-female' },
-    { name: 'Niños', icon: 'fa-child' },
+    { name: 'Inicio', icon: 'fa-home', path: '/' },
+    { name: 'Hombres', icon: 'fa-male', path: '/hombres' },
+    { name: 'Mujer', icon: 'fa-female', path: '/mujer' },
+    { name: 'Niños', icon: 'fa-child', path: '/ninos' },
   ];
 
   const showNotification = (message) => {
-    // Implementar notificación
+    // Implementar notificación real aquí
     console.log(message);
   };
 
@@ -36,12 +36,6 @@ const Header = () => {
     if (window.innerWidth < 768) {
       setIsMobileMenuOpen(false);
     }
-    showNotification(`Navegando a ${linkName}...`);
-  };
-
-  const handleAddToCart = () => {
-    setCartItems(prev => prev + 1);
-    showNotification('Producto agregado al carrito!');
   };
 
   return (
@@ -49,28 +43,29 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="logo-hover">
-            <a href="#" className="text-2xl font-bold tracking-tightest" onClick={(e) => e.preventDefault()}>
+            <Link 
+              to="/" 
+              className="text-2xl font-bold tracking-tightest"
+              onClick={() => handleNavClick('Inicio')}
+            >
               <span className="text-white">DU</span><span className="text-dukicks-blue">KICKS</span>
-            </a>
+            </Link>
           </div>
 
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href="#"
+                to={link.path}
                 className={`nav-link font-medium text-sm uppercase tracking-wider ${
                   activeLink === link.name 
                     ? 'active text-white' 
                     : 'text-gray-300 hover:text-white'
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(link.name);
-                }}
+                onClick={() => handleNavClick(link.name)}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -93,24 +88,21 @@ const Header = () => {
               </div>
             </div>
 
+            {/* Enlace al Carrito (Reemplaza al botón dropdown) */}
             <div className="relative">
-              <button
-                id="cartButton"
-                className="relative p-3 rounded-full bg-gray-900 hover:bg-gray-800 transition-colors cart-pulse"
-                onClick={() => setIsCartOpen(!isCartOpen)}
+              <Link
+                to="/cart"
+                className="relative block p-3 rounded-full bg-gray-900 hover:bg-gray-800 transition-colors cart-pulse"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsMobileSearchOpen(false);
+                }}
               >
                 <i className="fas fa-shopping-cart text-white text-lg"></i>
                 <span className="absolute -top-1 -right-1 bg-dukicks-blue text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {cartItems}
                 </span>
-              </button>
-
-              {isCartOpen && (
-                <CartDropdown 
-                  onClose={() => setIsCartOpen(false)}
-                  onUpdateCart={handleAddToCart}
-                />
-              )}
+              </Link>
             </div>
 
             <button
@@ -119,7 +111,6 @@ const Header = () => {
               onClick={() => {
                 setIsMobileSearchOpen(!isMobileSearchOpen);
                 setIsMobileMenuOpen(false);
-                setIsCartOpen(false);
               }}
             >
               <i className="fas fa-search text-xl"></i>
@@ -131,7 +122,6 @@ const Header = () => {
               onClick={() => {
                 setIsMobileMenuOpen(!isMobileMenuOpen);
                 setIsMobileSearchOpen(false);
-                setIsCartOpen(false);
               }}
             >
               <i className="fas fa-bars text-xl"></i>
@@ -174,22 +164,19 @@ const Header = () => {
         <div className={`mobile-menu md:hidden border-t border-gray-800 ${isMobileMenuOpen ? 'open' : ''}`}>
           <div className="py-4 space-y-3">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href="#"
+                to={link.path}
                 className={`block nav-link font-medium py-3 px-4 rounded-lg hover:bg-gray-900 transition-colors ${
                   activeLink === link.name 
                     ? 'active text-white' 
                     : 'text-gray-300 hover:text-white'
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(link.name);
-                }}
+                onClick={() => handleNavClick(link.name)}
               >
                 <i className={`fas ${link.icon} mr-3`}></i>
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
         </div>

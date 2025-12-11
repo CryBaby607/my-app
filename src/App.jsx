@@ -15,8 +15,9 @@ import Categories from './components/Categories';
 import FeaturedProducts from './components/FeaturedProducts';
 import HowItWorks from './components/HowItWorks';
 import Footer from './components/Footer';
+import CartPage from './pages/CartPage'; // <--- Importación de la página del carrito
 
-// Componente principal de la tienda pública
+// Componente principal de la tienda pública (Home)
 const MainApp = () => {
   return (
     <div className="bg-white text-gray-800 min-h-screen">
@@ -39,6 +40,9 @@ function App() {
         {/* Ruta principal de la tienda pública */}
         <Route path="/" element={<MainApp />} />
         
+        {/* Ruta del Carrito de Compras */}
+        <Route path="/cart" element={<CartPage />} />
+        
         {/* Rutas de autenticación para administradores */}
         <Route path="/admin/login" element={<AdminLogin />} />
         
@@ -50,7 +54,7 @@ function App() {
         }>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          {/* Agrega más rutas del admin aquí */}
+          {/* Rutas del admin */}
           <Route path="products" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Productos</h2></div>} />
           <Route path="orders" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Pedidos</h2></div>} />
           <Route path="customers" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Clientes</h2></div>} />
