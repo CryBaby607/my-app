@@ -9,29 +9,10 @@ import Dashboard from './pages/admin/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Importa los componentes de la tienda pública
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Categories from './components/Categories';
-import FeaturedProducts from './components/FeaturedProducts';
-import HowItWorks from './components/HowItWorks';
-import Footer from './components/Footer';
-import CartPage from './pages/CartPage'; // <--- Importación de la página del carrito
-
-// Componente principal de la tienda pública (Home)
-const MainApp = () => {
-  return (
-    <div className="bg-white text-gray-800 min-h-screen">
-      <Header />
-      <main>
-        <Hero />
-        <Categories />
-        <FeaturedProducts />
-        <HowItWorks />
-      </main>
-      <Footer />
-    </div>
-  );
-};
+import MainApp from './components/MainApp';
+import CartPage from './pages/CartPage';
+import CategoryPage from './pages/CategoryPage';
+import ProductPage from './pages/ProductPage'; // <--- 1. IMPORTAR
 
 function App() {
   return (
@@ -42,6 +23,15 @@ function App() {
         
         {/* Ruta del Carrito de Compras */}
         <Route path="/cart" element={<CartPage />} />
+
+        {/* Rutas de Categorías */}
+        <Route path="/gorras" element={<CategoryPage categoryKey="gorras" />} />
+        <Route path="/hombres" element={<CategoryPage categoryKey="hombres" />} />
+        <Route path="/mujer" element={<CategoryPage categoryKey="mujeres" />} />
+        <Route path="/ninos" element={<CategoryPage categoryKey="ninos" />} />
+
+        {/* Ruta Detalle de Producto */}
+        <Route path="/product/:id" element={<ProductPage />} />  {/* <--- 2. NUEVA RUTA */}
         
         {/* Rutas de autenticación para administradores */}
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -54,7 +44,6 @@ function App() {
         }>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          {/* Rutas del admin */}
           <Route path="products" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Productos</h2></div>} />
           <Route path="orders" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Pedidos</h2></div>} />
           <Route path="customers" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Clientes</h2></div>} />

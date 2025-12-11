@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
-  // Eliminamos el estado isCartOpen ya que no usamos el dropdown
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [cartItems, setCartItems] = useState(3);
@@ -10,22 +9,20 @@ const Header = () => {
 
   const navLinks = [
     { name: 'Inicio', icon: 'fa-home', path: '/' },
+    { name: 'Gorras', icon: 'fa-hat-cowboy', path: '/gorras' },
     { name: 'Hombres', icon: 'fa-male', path: '/hombres' },
     { name: 'Mujer', icon: 'fa-female', path: '/mujer' },
     { name: 'Niños', icon: 'fa-child', path: '/ninos' },
   ];
 
   const showNotification = (message) => {
-    // Implementar notificación real aquí
     console.log(message);
   };
 
-  const handleSearch = (searchTerm, isMobile = false) => {
+  const handleSearch = (searchTerm) => {
     if (searchTerm) {
       showNotification(`Buscando: "${searchTerm}"...`);
-      if (isMobile) {
-        setIsMobileSearchOpen(false);
-      }
+      setIsMobileSearchOpen(false);
     } else {
       showNotification('🔍 Escribe algo para buscar');
     }
@@ -88,7 +85,6 @@ const Header = () => {
               </div>
             </div>
 
-            {/* Enlace al Carrito (Reemplaza al botón dropdown) */}
             <div className="relative">
               <Link
                 to="/cart"
@@ -108,10 +104,7 @@ const Header = () => {
             <button
               id="mobileSearchButton"
               className="md:hidden text-white p-2 rounded-lg hover:bg-gray-800 transition-colors"
-              onClick={() => {
-                setIsMobileSearchOpen(!isMobileSearchOpen);
-                setIsMobileMenuOpen(false);
-              }}
+              onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             >
               <i className="fas fa-search text-xl"></i>
             </button>
@@ -119,10 +112,7 @@ const Header = () => {
             <button
               id="mobileMenuButton"
               className="md:hidden text-white p-2 rounded-lg hover:bg-gray-800 transition-colors"
-              onClick={() => {
-                setIsMobileMenuOpen(!isMobileMenuOpen);
-                setIsMobileSearchOpen(false);
-              }}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <i className="fas fa-bars text-xl"></i>
             </button>
@@ -142,7 +132,7 @@ const Header = () => {
                     id="mobileSearchInput"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
-                        handleSearch(e.target.value, true);
+                        handleSearch(e.target.value);
                       }
                     }}
                   />
@@ -150,7 +140,7 @@ const Header = () => {
                     className="ml-2 px-4 py-2 bg-dukicks-blue text-white text-sm rounded-full hover:bg-blue-700 transition-colors"
                     onClick={() => {
                       const input = document.getElementById('mobileSearchInput');
-                      handleSearch(input.value, true);
+                      handleSearch(input.value);
                     }}
                   >
                     Buscar
