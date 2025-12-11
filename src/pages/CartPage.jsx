@@ -1,48 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useCart } from '../context/CartContext'; // <--- IMPORTANTE: Importar el contexto
 
 const CartPage = () => {
-  // Estado local simulado (Idealmente esto vendría de un Context global)
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Gorra Negra Clásica',
-      size: 'Talla Única',
-      price: 29.99,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    },
-    {
-      id: 2,
-      name: 'Tenis Running Pro',
-      size: 'Talla 42',
-      price: 89.99,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    }
-  ]);
+  const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
 
-  const updateQuantity = (id, delta) => {
-    setCartItems(items =>
-      items.map(item => {
-        if (item.id === id) {
-          const newQuantity = Math.max(1, item.quantity + delta);
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
-    );
-  };
-
-  const removeItem = (id) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = 10.00; // Ejemplo de envío
+  const subtotal = getCartTotal();
+  const shipping = subtotal > 0 ? 10.00 : 0; // Envío solo si hay productos
   const total = subtotal + shipping;
+
+  // Función para generar el link de WhatsApp con el pedido
+  const handleWhatsAppCheckout = () => {
+    if (cartItems.length === 0) return;
+
+    let message = "Hola DUKICKS, me gustaría completar mi pedido:%0A%0A";
+    cartItems.forEach(item => {
+      message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price}%0A`;
+    });
+    message += `%0A*Total: $${total.toFixed(2)}*`;
+
+    // Reemplaza el número con el real de la tienda
+    const phoneNumber = "5215555555555"; 
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -64,7 +46,8 @@ const CartPage = () => {
             {/* Lista de Productos */}
             <div className="lg:w-2/3 space-y-4">
               {cartItems.map((item) => (
-                <div key={item.id} className="flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                // Usamos item.id + item.size como key para diferenciar tallas
+                <div key={`${item.id}-${item.size}`} className="flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -72,28 +55,28 @@ const CartPage = () => {
                   />
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-bold text-lg">{item.name}</h3>
-                    <p className="text-gray-500 text-sm mb-2">{item.size}</p>
+                    <p className="text-gray-500 text-sm mb-2">Talla: {item.size}</p>
                     <div className="text-dukicks-blue font-bold text-xl">${item.price.toFixed(2)}</div>
                   </div>
                   
                   <div className="flex items-center mt-4 sm:mt-0">
                     <div className="flex items-center border border-gray-300 rounded-lg mr-6">
                       <button 
-                        onClick={() => updateQuantity(item.id, -1)}
+                        onClick={() => updateQuantity(item.id, item.size, -1)}
                         className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-l-lg"
                       >
                         -
                       </button>
                       <span className="px-3 font-medium">{item.quantity}</span>
                       <button 
-                        onClick={() => updateQuantity(item.id, 1)}
+                        onClick={() => updateQuantity(item.id, item.size, 1)}
                         className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-r-lg"
                       >
                         +
                       </button>
                     </div>
                     <button 
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeFromCart(item.id, item.size)}
                       className="text-red-500 hover:text-red-700 transition-colors"
                     >
                       <i className="fas fa-trash-alt"></i>
@@ -123,9 +106,12 @@ const CartPage = () => {
                   </div>
                 </div>
 
-                <button className="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 transition-transform transform hover:-translate-y-1 shadow-lg flex items-center justify-center">
+                <button 
+                  onClick={handleWhatsAppCheckout}
+                  className="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 transition-transform transform hover:-translate-y-1 shadow-lg flex items-center justify-center"
+                >
                   <i className="fab fa-whatsapp mr-2 text-2xl"></i>
-                  Completar Pedido por WhatsApp
+                  Completar Pedido
                 </button>
                 
                 <p className="text-xs text-gray-500 text-center mt-4">
