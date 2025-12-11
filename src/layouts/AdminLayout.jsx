@@ -4,7 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // 1. Inicializamos el estado basándonos en el tamaño de la pantalla
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
+  
   const [user, setUser] = useState({
     name: 'Admin',
     email: localStorage.getItem('adminEmail') || 'admin@dukicks.com',
@@ -18,6 +21,20 @@ const AdminLayout = () => {
   ]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // 2. Efecto para manejar el redimensionamiento de ventana
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const navItems = [
     { path: '/admin/dashboard', icon: 'fas fa-tachometer-alt', label: 'Dashboard', exact: true },
@@ -54,7 +71,7 @@ const AdminLayout = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar Mobile Overlay */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {sidebarOpen && window.innerWidth < 1024 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -67,17 +84,16 @@ const AdminLayout = () => {
 
       {/* Sidebar */}
       <motion.aside
-        initial={{ x: -300 }}
+        initial={false}
         animate={{ x: sidebarOpen ? 0 : -300 }}
-        className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-gray-900 to-black shadow-xl lg:translate-x-0 lg:static lg:inset-0"
+        transition={{ duration: 0.3 }}
+        className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-gray-900 to-black shadow-xl"
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-gray-800">
             <Link to="/admin/dashboard" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-dukicks-blue rounded-lg flex items-center justify-center">
-                <i className="fas fa-crown text-white text-lg"></i>
-              </div>
+              {/* Icono de corona eliminado aquí */}
               <div>
                 <h1 className="text-xl font-bold text-white">
                   <span>DU</span>
@@ -88,26 +104,10 @@ const AdminLayout = () => {
             </Link>
           </div>
 
-          {/* User Info */}
-          <div className="p-6 border-b border-gray-800">
-            <div className="flex items-center space-x-3">
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-12 h-12 rounded-full border-2 border-dukicks-blue"
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold truncate">{user.name}</p>
-                <p className="text-gray-400 text-sm truncate">{user.email}</p>
-                <span className="inline-block px-2 py-1 mt-1 text-xs bg-dukicks-blue/20 text-dukicks-blue rounded-full">
-                  {user.role}
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* User Info (Sección eliminada) */}
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 overflow-y-auto">
+          <nav className="flex-1 p-4 overflow-y-auto custom-scrollbar">
             <ul className="space-y-2">
               {navItems.map((item) => (
                 <li key={item.path}>
@@ -121,7 +121,9 @@ const AdminLayout = () => {
                           : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       }`
                     }
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={() => {
+                        if (window.innerWidth < 1024) setSidebarOpen(false);
+                    }}
                   >
                     <i className={`${item.icon} w-5 text-center`}></i>
                     <span className="font-medium">{item.label}</span>
@@ -153,7 +155,7 @@ const AdminLayout = () => {
       </motion.aside>
 
       {/* Main Content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 transition-all duration-300">
         {/* Topbar */}
         <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
           <div className="flex items-center justify-between px-6 py-4">
