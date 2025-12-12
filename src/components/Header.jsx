@@ -129,8 +129,8 @@ const Header = () => {
         {/* Barra de Búsqueda Móvil Desplegable */}
         {isMobileSearchOpen && (
           <div className="mobile-search md:hidden border-t border-gray-800 fade-in">
-             <div className="py-3 px-4">
-               <form onSubmit={handleSearchSubmit} className="flex items-center bg-gray-900 border border-gray-700 rounded-lg px-4 py-2">
+            <div className="py-3 px-4">
+              <form onSubmit={handleSearchSubmit} className="flex items-center bg-gray-900 border border-gray-700 rounded-lg px-4 py-2">
                   <button type="submit" className="fas fa-search text-gray-400 mr-3"></button>
                   <input
                     type="text"
@@ -140,14 +140,14 @@ const Header = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     autoFocus
                   />
-               </form>
-             </div>
+              </form>
+            </div>
           </div>
         )}
 
-        {/* Menú Móvil - SIN ICONOS */}
+        {/* Menú Móvil */}
         <div className={`mobile-menu md:hidden border-t border-gray-800 ${isMobileMenuOpen ? 'open' : ''}`}>
-           <div className="py-4 space-y-3">
+          <div className="py-4 space-y-3">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -158,7 +158,7 @@ const Header = () => {
                 {link.name}
               </Link>
             ))}
-           </div>
+          </div>
         </div>
       </div>
     </header>

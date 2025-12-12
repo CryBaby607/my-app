@@ -48,7 +48,7 @@ const Categories = () => {
             Encuentra exactamente lo que buscas en nuestras categorías especializadas
           </p>
         </div>
-
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {categories.map((category) => (
             <div
@@ -56,7 +56,6 @@ const Categories = () => {
               className="category-card bg-white rounded-2xl p-6 shadow-soft hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col justify-between"
             >
               <div>
-                {/* Círculo eliminado, solo queda el título e imagen */}
                 <h3 className="text-2xl font-bold text-center mb-3 text-gray-900">{category.title}</h3>
                 <p className="text-gray-600 text-center mb-6 text-sm">{category.description}</p>
                 <div className="aspect-w-16 aspect-h-9 mb-4 rounded-xl overflow-hidden">
