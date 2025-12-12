@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { auth } from '../firebase/config'; 
+import { signOut } from 'firebase/auth';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -46,6 +48,14 @@ const AdminLayout = () => {
     { path: '/admin/settings', icon: 'fas fa-cog', label: 'Configuración' }
   ];
 
+  // Mapeo para corregir clases dinámicas de Tailwind (Clases estáticas completas)
+  const colorMap = {
+      blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+      green: { bg: 'bg-green-100', text: 'text-green-600' },
+      purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
+      yellow: { bg: 'bg-yellow-100', text: 'text-yellow-600' }
+  };
+
   const stats = {
     orders: { value: '156', change: '+12%', icon: 'fas fa-shopping-cart', color: 'blue' },
     revenue: { value: '$12,456', change: '+8%', icon: 'fas fa-dollar-sign', color: 'green' },
@@ -53,10 +63,21 @@ const AdminLayout = () => {
     products: { value: '189', change: '+3%', icon: 'fas fa-box', color: 'yellow' }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminEmail');
-    navigate('/admin/login');
+  // <-- CORRECCIÓN DE SEGURIDAD: Cierre de sesión completo en Firebase
+  const handleLogout = async () => {
+    try {
+      // 1. Cerrar sesión en los servidores de Firebase
+      await signOut(auth); 
+    } catch (error) {
+      console.error("Error al cerrar sesión en Firebase:", error);
+      // Continuar con la limpieza local en caso de error de conexión
+    } finally {
+      // 2. Limpiar datos locales
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminEmail');
+      // 3. Redirigir
+      navigate('/admin/login');
+    }
   };
 
   const markNotificationAsRead = (id) => {
@@ -319,8 +340,9 @@ const AdminLayout = () => {
                       <p className="text-sm text-gray-500 capitalize">{key}</p>
                       <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>
-                    <div className={`p-3 rounded-full bg-${stat.color}-100`}>
-                      <i className={`${stat.icon} text-${stat.color}-600`}></i>
+                    {/* CORRECCIÓN: Usando el mapa de colores para aplicar clases estáticas */}
+                    <div className={`p-3 rounded-full ${colorMap[stat.color].bg}`}> 
+                      <i className={`${stat.icon} ${colorMap[stat.color].text}`}></i> 
                     </div>
                   </div>
                   <div className="mt-2">

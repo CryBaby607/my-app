@@ -3,10 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
-import { db } from '../firebase/config'; // Importamos la DB
-import { doc, getDoc } from 'firebase/firestore'; // Funciones para obtener un solo documento
+import { db } from '../firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
+import { getPriceDetails } from '../utils/productUtils';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -67,7 +67,7 @@ const ProductPage = () => {
       return;
     }
 
-    const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+    const priceDetails = getPriceDetails(product.price, product.discount); // Usando product.discount
     const finalPrice = priceDetails.finalPrice; // Precio final con descuento (o regular)
     
     const total = finalPrice * quantity;
@@ -89,7 +89,10 @@ const ProductPage = () => {
     </div>
   );
 
-  const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+  const priceDetails = getPriceDetails(product.price, product.discount); // Usando product.discount
+  
+  // <-- CORRECCIÓN APLICADA AQUÍ: Se crea el nombre completo de forma robusta
+  const productNameDisplay = `${product.brand || product.name} ${product.model || ''}`.trim(); 
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -104,7 +107,8 @@ const ProductPage = () => {
             {product.category}
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-gray-900 font-medium">{product.name}</span>
+          {/* CORRECCIÓN: Usando productNameDisplay para el breadcrumb */}
+          <span className="text-gray-900 font-medium">{productNameDisplay}</span>
         </div>
 
         <div className="flex flex-col md:flex-row gap-12">
@@ -125,7 +129,8 @@ const ProductPage = () => {
               <p className="text-dukicks-blue font-semibold tracking-wide uppercase text-sm mb-2">
                 {product.category}
               </p>
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
+              {/* CORRECCIÓN: Usando productNameDisplay para el título principal */}
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">{productNameDisplay}</h1>
               
               {/* Bloque de Precio con Descuento */}
               <div className="flex items-center space-x-3">
