@@ -8,6 +8,7 @@ import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import NewProduct from './pages/admin/NewProduct';
 import ProductsList from './pages/admin/ProductsList';
+import EditProduct from './pages/admin/EditProduct';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Importa los componentes de la tienda pública
@@ -51,10 +52,9 @@ function App() {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           
-          {/* --- RUTA NUEVA PARA CREAR PRODUCTOS --- */}
           <Route path="products/new" element={<NewProduct />} />
-          
-          <Route path="products" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Productos</h2></div>} />
+          <Route path="products" element={<ProductsList />} />
+          <Route path="products/edit/:id" element={<EditProduct />} />
           <Route path="orders" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Pedidos</h2></div>} />
           <Route path="customers" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Clientes</h2></div>} />
           <Route path="categories" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Categorías</h2></div>} />
