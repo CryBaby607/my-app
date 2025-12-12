@@ -92,10 +92,14 @@ const ProductsList = () => {
                 </td>
                 <td className="px-6 py-4 text-center">
                   <div className="flex justify-center space-x-3">
-                    {/* Botón Editar (Lo implementaremos después, por ahora solo visual) */}
-                    <button className="text-blue-600 hover:text-blue-900" title="Editar">
+                    {/* Botón Editar - CORREGIDO */}
+                    <Link 
+                      to={`/admin/products/edit/${product.id}`} 
+                      className="text-blue-600 hover:text-blue-900" 
+                      title="Editar"
+                    >
                       <i className="fas fa-edit"></i>
-                    </button>
+                    </Link>
                     
                     {/* Botón Eliminar */}
                     <button 
