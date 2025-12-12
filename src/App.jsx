@@ -7,6 +7,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import NewProduct from './pages/admin/NewProduct';
+import ProductsList from './pages/admin/ProductsList';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Importa los componentes de la tienda pública
