@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase/config';
 import { collection, addDoc } from 'firebase/firestore';
@@ -12,15 +12,29 @@ const NewProduct = () => {
     price: '',
     category: 'Hombres', // Valor por defecto
     description: '',
-    sizes: [], // Array para las tallas seleccionadas
+    sizes: [], 
   });
   
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Opciones de tallas disponibles (puedes agregar más)
-  const availableSizes = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', 'S/M', 'M/L', 'L/XL', 'Unitalla'];
+  // --- DEFINICIÓN DE TALLAS POR CATEGORÍA ---
+  const categorySizes = {
+    'Hombres': ['25', '25.5', '26', '26.5', '27', '27.5', '28', '28.5', '29', '29.5', '30', '30.5', '31'],
+    'Mujer': ['22', '22.5', '23', '23.5', '24', '24.5', '25', '25.5', '26', '26.5', '27'],
+    'Niños': ['15', '16', '17', '18', '19', '20', '21', '22'],
+    'Gorras': ['Unitalla'] // O puedes poner ['S/M', 'L/XL'] si manejas tallas
+  };
+
+  // Obtener las tallas actuales basadas en la categoría seleccionada
+  const currentSizes = categorySizes[formData.category] || [];
+
+  // Efecto: Si cambia la categoría, limpiamos las tallas seleccionadas para evitar incoherencias
+  // (Opcional: puedes quitar esto si prefieres mantenerlas)
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, sizes: [] }));
+  }, [formData.category]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +45,6 @@ const NewProduct = () => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      // Crear preview local para que el usuario vea qué seleccionó
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
     }
@@ -40,8 +53,8 @@ const NewProduct = () => {
   const handleSizeToggle = (size) => {
     setFormData(prev => {
       const sizes = prev.sizes.includes(size)
-        ? prev.sizes.filter(s => s !== size) // Quitar si ya está
-        : [...prev.sizes, size]; // Agregar si no está
+        ? prev.sizes.filter(s => s !== size)
+        : [...prev.sizes, size];
       return { ...prev, sizes };
     });
   };
@@ -62,30 +75,25 @@ const NewProduct = () => {
     setIsUploading(true);
 
     try {
-      // 1. Subir imagen a Cloudinary usando tu utilidad
-      console.log("Subiendo imagen...");
       const imageUrl = await uploadImageToCloudinary(imageFile);
       
       if (!imageUrl) throw new Error('Error al subir la imagen');
 
-      // 2. Preparar objeto para Firebase
       const newProduct = {
         ...formData,
-        price: parseFloat(formData.price), // Convertir texto a número
+        price: parseFloat(formData.price),
         image: imageUrl,
-        createdAt: new Date() // Guardamos la fecha de creación
+        createdAt: new Date()
       };
 
-      // 3. Guardar en Firestore
-      console.log("Guardando en base de datos...");
       await addDoc(collection(db, "products"), newProduct);
 
       alert('¡Producto creado exitosamente!');
-      navigate('/admin/dashboard'); // Redirigir al terminar
+      navigate('/admin/products');
 
     } catch (error) {
       console.error("Error creando producto:", error);
-      alert('Hubo un error al crear el producto. Revisa la consola.');
+      alert('Hubo un error al crear el producto.');
     } finally {
       setIsUploading(false);
     }
@@ -97,7 +105,6 @@ const NewProduct = () => {
       
       <form onSubmit={handleSubmit} className="space-y-6">
         
-        {/* Nombre y Precio */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto</label>
@@ -106,7 +113,7 @@ const NewProduct = () => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
               placeholder="Ej: Nike Air Force 1"
               required
             />
@@ -118,7 +125,7 @@ const NewProduct = () => {
               name="price"
               value={formData.price}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
               placeholder="0.00"
               min="0"
               step="0.01"
@@ -127,14 +134,13 @@ const NewProduct = () => {
           </div>
         </div>
 
-        {/* Categoría */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
           <select
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue focus:border-transparent outline-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
           >
             <option value="Hombres">Hombres</option>
             <option value="Mujer">Mujer</option>
@@ -143,7 +149,6 @@ const NewProduct = () => {
           </select>
         </div>
 
-        {/* Descripción */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
           <textarea
@@ -151,35 +156,43 @@ const NewProduct = () => {
             value={formData.description}
             onChange={handleInputChange}
             rows="4"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue focus:border-transparent outline-none resize-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none resize-none"
             placeholder="Detalles del producto..."
             required
           />
         </div>
 
-        {/* Tallas */}
+        {/* SECCIÓN DE TALLAS DINÁMICAS */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tallas Disponibles</label>
-          <div className="flex flex-wrap gap-2">
-            {availableSizes.map(size => (
-              <button
-                key={size}
-                type="button"
-                onClick={() => handleSizeToggle(size)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                  formData.sizes.includes(size)
-                    ? 'bg-dukicks-blue text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tallas Disponibles ({formData.category})
+          </label>
+          
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              {currentSizes.length > 0 ? (
+                currentSizes.map(size => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => handleSizeToggle(size)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all shadow-sm ${
+                      formData.sizes.includes(size)
+                        ? 'bg-dukicks-blue text-white ring-2 ring-blue-300 ring-offset-1'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm">No hay tallas definidas para esta categoría.</p>
+              )}
+            </div>
+            {formData.sizes.length === 0 && <p className="text-amber-600 text-xs mt-3 flex items-center"><i className="fas fa-info-circle mr-1"></i> Selecciona al menos una opción.</p>}
           </div>
-          {formData.sizes.length === 0 && <p className="text-red-500 text-xs mt-1">Selecciona al menos una talla</p>}
         </div>
 
-        {/* Subida de Imagen */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Imagen del Producto</label>
           <div className="flex items-center space-x-4">
@@ -199,7 +212,6 @@ const NewProduct = () => {
           </div>
         </div>
 
-        {/* Botón Submit */}
         <div className="pt-4">
           <button
             type="submit"
@@ -210,13 +222,7 @@ const NewProduct = () => {
                 : 'bg-green-600 hover:bg-green-700 shadow-lg hover:-translate-y-1'
             }`}
           >
-            {isUploading ? (
-              <span className="flex items-center justify-center">
-                <i className="fas fa-spinner fa-spin mr-2"></i> Guardando...
-              </span>
-            ) : (
-              'Crear Producto'
-            )}
+            {isUploading ? 'Guardando...' : 'Crear Producto'}
           </button>
         </div>
 

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { db } from '../firebase/config'; // Importamos la DB
-import { collection, getDocs } from 'firebase/firestore'; // Funciones de Firebase
+import { db } from '../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
-  const queryText = searchParams.get('q') || ''; // Renombrado para claridad
+  const queryText = searchParams.get('q') || ''; 
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,10 +16,7 @@ const SearchResultsPage = () => {
     const fetchAndFilterProducts = async () => {
       setLoading(true);
       try {
-        // 1. Traemos todos los productos de Firebase
-        // (Nota: Firebase no tiene búsqueda de texto nativa simple "LIKE %texto%", 
-        // así que traemos la colección y filtramos en el cliente. 
-        // Para apps gigantes se usaría Algolia o ElasticSearch, pero esto sirve perfecto para empezar)
+        // 1. Traemos los productos REALES de Firebase
         const productsRef = collection(db, "products");
         const snapshot = await getDocs(productsRef);
         
@@ -28,7 +25,7 @@ const SearchResultsPage = () => {
           ...doc.data()
         }));
 
-        // 2. Filtramos en memoria
+        // 2. Filtramos los resultados
         if (queryText) {
           const lowerQuery = queryText.toLowerCase();
           const results = allProducts.filter(product => 
@@ -51,7 +48,7 @@ const SearchResultsPage = () => {
     };
 
     fetchAndFilterProducts();
-  }, [queryText]);
+  }, [queryText]); // Se ejecuta cada vez que cambia la búsqueda
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -63,7 +60,7 @@ const SearchResultsPage = () => {
 
         {loading ? (
           <div className="py-20 flex justify-center">
-             <LoadingSpinner size="lg" />
+            <LoadingSpinner size="lg" />
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-2xl">

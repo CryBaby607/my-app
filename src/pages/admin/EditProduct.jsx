@@ -6,7 +6,7 @@ import { uploadImageToCloudinary } from '../../utils/cloudinary';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 const EditProduct = () => {
-  const { id } = useParams(); // Obtenemos el ID de la URL
+  const { id } = useParams();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ const EditProduct = () => {
     category: '',
     description: '',
     sizes: [],
-    image: '' // Guardamos la URL de la imagen actual
+    image: ''
   });
   
   const [imageFile, setImageFile] = useState(null);
@@ -23,9 +23,18 @@ const EditProduct = () => {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  const availableSizes = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', 'S/M', 'M/L', 'L/XL', 'Unitalla'];
+  // Definición de tallas por categoría
+  const categorySizes = {
+    'Hombres': ['25', '25.5', '26', '26.5', '27', '27.5', '28', '28.5', '29', '29.5', '30', '30.5', '31'],
+    'Mujer': ['22', '22.5', '23', '23.5', '24', '24.5', '25', '25.5', '26', '26.5', '27'],
+    'Niños': ['15', '16', '17', '18', '19', '20', '21', '22'],
+    'Gorras': ['Unitalla']
+  };
 
-  // 1. Cargar datos del producto al iniciar
+  // Obtener tallas dinámicas basadas en la categoría ACTUAL
+  const currentSizes = categorySizes[formData.category] || [];
+
+  // Cargar producto
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -34,7 +43,7 @@ const EditProduct = () => {
 
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          setImagePreview(docSnap.data().image); // Mostrar la imagen actual
+          setImagePreview(docSnap.data().image);
         } else {
           alert("Producto no encontrado");
           navigate('/admin/products');
@@ -48,6 +57,20 @@ const EditProduct = () => {
 
     fetchProduct();
   }, [id, navigate]);
+
+  // Manejar cambio de categoría en Edición
+  // IMPORTANTE: Aquí NO borramos las tallas automáticamente en el useEffect 
+  // porque al cargar el producto por primera vez se dispararía y borraría las tallas guardadas.
+  // Solo las borramos si el usuario cambia manualmente el select.
+  const handleCategoryChange = (e) => {
+    const newCategory = e.target.value;
+    // Si cambia de categoría, limpiamos tallas porque las anteriores no tendrán sentido (ej: pasar de Gorra a Tenis)
+    setFormData({ 
+      ...formData, 
+      category: newCategory,
+      sizes: [] 
+    });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -78,12 +101,10 @@ const EditProduct = () => {
     try {
       let imageUrl = formData.image;
 
-      // 2. Si el usuario seleccionó una NUEVA imagen, la subimos
       if (imageFile) {
         imageUrl = await uploadImageToCloudinary(imageFile);
       }
 
-      // 3. Actualizamos el documento en Firebase
       const productRef = doc(db, "products", id);
       
       await updateDoc(productRef, {
@@ -142,7 +163,7 @@ const EditProduct = () => {
           <select
             name="category"
             value={formData.category}
-            onChange={handleInputChange}
+            onChange={handleCategoryChange} // Usamos el handler especial
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
           >
             <option value="Hombres">Hombres</option>
@@ -164,23 +185,32 @@ const EditProduct = () => {
           />
         </div>
 
+        {/* TALLAS DINÁMICAS */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tallas</label>
-          <div className="flex flex-wrap gap-2">
-            {availableSizes.map(size => (
-              <button
-                key={size}
-                type="button"
-                onClick={() => handleSizeToggle(size)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                  formData.sizes.includes(size)
-                    ? 'bg-dukicks-blue text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tallas Disponibles ({formData.category})
+          </label>
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              {currentSizes.length > 0 ? (
+                currentSizes.map(size => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => handleSizeToggle(size)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all shadow-sm ${
+                      formData.sizes.includes(size)
+                        ? 'bg-dukicks-blue text-white ring-2 ring-blue-300 ring-offset-1'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm">No hay tallas definidas para esta categoría.</p>
+              )}
+            </div>
           </div>
         </div>
 
