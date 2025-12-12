@@ -1,8 +1,3 @@
-/**
- * Función para subir imágenes a Cloudinary
- * @param {File} file - El archivo de imagen seleccionado por el usuario
- * @returns {Promise<string>} - La URL de la imagen en internet
- */
 export const uploadImageToCloudinary = async (file) => {
   // 1. Validar que exista un archivo
   if (!file) return null;
