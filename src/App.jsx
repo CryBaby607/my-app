@@ -12,7 +12,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import MainApp from './components/MainApp';
 import CartPage from './pages/CartPage';
 import CategoryPage from './pages/CategoryPage';
-import ProductPage from './pages/ProductPage'; // <--- 1. IMPORTAR
+import ProductPage from './pages/ProductPage';
+import SearchResultsPage from './pages/SearchResultsPage';
 
 function App() {
   return (
@@ -31,7 +32,10 @@ function App() {
         <Route path="/ninos" element={<CategoryPage categoryKey="ninos" />} />
 
         {/* Ruta Detalle de Producto */}
-        <Route path="/product/:id" element={<ProductPage />} />  {/* <--- 2. NUEVA RUTA */}
+        <Route path="/product/:id" element={<ProductPage />} />
+        
+        {/* Ruta de Resultados de Búsqueda */}
+        <Route path="/search" element={<SearchResultsPage />} />
         
         {/* Rutas de autenticación para administradores */}
         <Route path="/admin/login" element={<AdminLogin />} />
