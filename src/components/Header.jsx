@@ -145,7 +145,7 @@ const Header = () => {
           </div>
         )}
 
-        {/* Menú Móvil - Corregido sin iconos */}
+        {/* Menú Móvil - SIN ICONOS */}
         <div className={`mobile-menu md:hidden border-t border-gray-800 ${isMobileMenuOpen ? 'open' : ''}`}>
            <div className="py-4 space-y-3">
             {navLinks.map((link) => (
