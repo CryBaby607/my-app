@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { products } from '../data/products';
+import { products } from '../data/products'; // Importamos la fuente única de datos
 
 const CategoryPage = ({ categoryKey }) => {
   const [items, setItems] = useState([]);
+  const [sortOption, setSortOption] = useState('recent'); // Estado para controlar el orden
 
   useEffect(() => {
     window.scrollTo(0, 0);
     
+    // 1. Mapeo para traducir la URL a la categoría de la BD
     const categoryMap = {
       'hombres': 'Hombres',
       'mujeres': 'Mujer',
@@ -19,11 +21,21 @@ const CategoryPage = ({ categoryKey }) => {
 
     const targetCategory = categoryMap[categoryKey];
 
-    // Filtramos usando la base de datos central
-    const filteredItems = products.filter(p => p.category === targetCategory);
-    setItems(filteredItems);
+    // 2. Filtramos los productos de la BD central
+    let filteredItems = products.filter(p => p.category === targetCategory);
+
+    // 3. Aplicamos el ordenamiento según la selección
+    if (sortOption === 'price-asc') {
+      filteredItems.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'price-desc') {
+      filteredItems.sort((a, b) => b.price - a.price);
+    }
+    // Si es 'recent', dejamos el orden por defecto (como vienen en el array)
+
+    // Actualizamos el estado
+    setItems([...filteredItems]);
     
-  }, [categoryKey]);
+  }, [categoryKey, sortOption]); // Se ejecuta cuando cambia la categoría O el orden
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -31,13 +43,19 @@ const CategoryPage = ({ categoryKey }) => {
 
       <main className="flex-grow container mx-auto px-4 py-12">
         <div className="w-full">
+          
           <div className="flex justify-between items-center mb-6">
             <span className="text-gray-500">{items.length} productos encontrados</span>
-            {/* Aquí implementaremos el ordenamiento luego */}
-            <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-dukicks-blue">
-              <option>Más recientes</option>
-              <option>Precio: Menor a Mayor</option>
-              <option>Precio: Mayor a Menor</option>
+            
+            {/* SELECTOR DE ORDENAMIENTO ACTIVO */}
+            <select 
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-dukicks-blue bg-white cursor-pointer"
+            >
+              <option value="recent">Más recientes</option>
+              <option value="price-asc">Precio: Menor a Mayor</option>
+              <option value="price-desc">Precio: Mayor a Menor</option>
             </select>
           </div>
 
@@ -68,7 +86,10 @@ const CategoryPage = ({ categoryKey }) => {
             </div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-gray-500">No hay productos en esta categoría por el momento.</p>
+              <p className="text-gray-500 mb-4">No hay productos disponibles en esta categoría.</p>
+              <Link to="/" className="text-dukicks-blue font-semibold hover:underline">
+                Volver al inicio
+              </Link>
             </div>
           )}
         </div>

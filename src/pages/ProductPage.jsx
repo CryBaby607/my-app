@@ -23,7 +23,6 @@ const ProductPage = () => {
     if (foundProduct) {
       setProduct(foundProduct);
     } else {
-        // Manejo básico de error o producto no encontrado
        console.error("Producto no encontrado");
     }
     setLoading(false);
@@ -41,6 +40,25 @@ const ProductPage = () => {
     setTimeout(() => {
       setBtnText('Agregar al Carrito');
     }, 2000);
+  };
+
+  // --- NUEVA LÓGICA DE COMPRA DIRECTA ---
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      alert('Por favor selecciona una talla para continuar');
+      return;
+    }
+
+    const total = product.price * quantity;
+    
+    // Mensaje personalizado para un solo producto
+    const message = `Hola DUKICKS, me gustaría comprar este producto:%0A%0A` +
+      `- ${quantity}x ${product.name} (Talla: ${selectedSize}) - $${product.price}%0A%0A` +
+      `*Total a pagar: $${total.toFixed(2)}*`;
+
+    // Reemplaza con tu número real
+    const phoneNumber = "5215555555555"; 
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
@@ -142,8 +160,12 @@ const ProductPage = () => {
               >
                 {btnText}
               </button>
-              {/* Botón comprar ahora (placeholder para futura implementación) */}
-              <button className="flex-1 bg-green-500 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-transform transform hover:-translate-y-1 shadow-lg flex items-center justify-center">
+              
+              {/* BOTÓN CONECTADO A WHATSAPP */}
+              <button 
+                onClick={handleBuyNow}
+                className="flex-1 bg-green-500 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-transform transform hover:-translate-y-1 shadow-lg flex items-center justify-center"
+              >
                 <i className="fab fa-whatsapp mr-2 text-xl"></i>
                 Comprar Ahora
               </button>
