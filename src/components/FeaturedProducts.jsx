@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { collection, getDocs, limit, query, orderBy } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
+import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
@@ -69,7 +70,10 @@ const FeaturedProducts = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {products.map((product) => (
+            {products.map((product) => {
+              const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+              
+              return (
               <div
                 key={product.id}
                 className="product-card bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
@@ -81,10 +85,17 @@ const FeaturedProducts = () => {
                       alt={product.name}
                       className="product-image w-full h-64 object-cover transition-transform duration-500"
                     />
-                    {/* Etiqueta de Nuevo (opcional: lógica simple para mostrarlo en todos los recientes) */}
+                    {/* Etiqueta de Descuento */}
+                    {priceDetails.isDiscounted ? (
+                        <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            -{priceDetails.discount}%
+                        </div>
+                    ) : (
+                    /* Etiqueta de Nuevo (si no hay descuento) */
                     <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                       Nuevo
                     </div>
+                    )}
                   </Link>
                 </div>
                 
@@ -102,8 +113,14 @@ const FeaturedProducts = () => {
                   <div className="mt-auto">
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        {/* Aseguramos que price sea numérico antes de toFixed */}
-                        <span className="text-2xl font-bold text-gray-900">${Number(product.price).toFixed(2)}</span>
+                        {/* Precio Regular con tachado */}
+                        {priceDetails.isDiscounted && (
+                            <span className="text-sm text-gray-500 line-through block">${priceDetails.regularPrice.toFixed(2)}</span>
+                        )}
+                        {/* Precio Final */}
+                        <span className={`text-2xl font-bold ${priceDetails.isDiscounted ? 'text-red-500' : 'text-gray-900'}`}>
+                            ${priceDetails.finalPrice.toFixed(2)}
+                        </span>
                       </div>
                     </div>
                     
@@ -117,7 +134,7 @@ const FeaturedProducts = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>

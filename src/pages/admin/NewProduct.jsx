@@ -14,6 +14,7 @@ const NewProduct = () => {
     category: 'Hombres',
     description: '',
     sizes: [], 
+    discount: '0',
   });
   
   const [imageFile, setImageFile] = useState(null);
@@ -25,7 +26,7 @@ const NewProduct = () => {
     'Hombres': ['25', '25.5', '26', '26.5', '27', '27.5', '28', '28.5', '29', '29.5', '30', '30.5', '31'],
     'Mujer': ['22', '22.5', '23', '23.5', '24', '24.5', '25', '25.5', '26', '26.5', '27'],
     'Niños': ['15', '16', '17', '18', '19', '20', '21', '22'],
-    'Gorras': ['Unitalla'] // O puedes poner ['S/M', 'L/XL'] si manejas tallas
+    'Gorras': ['Unitalla']
   };
 
   // Obtener las tallas actuales basadas en la categoría seleccionada
@@ -85,6 +86,7 @@ const NewProduct = () => {
         // NEW: Concatena brand y model para el campo 'name'
         name: `${formData.brand} ${formData.model}`.trim(),
         price: parseFloat(formData.price),
+        discount: parseFloat(formData.discount) || 0, // <-- CORREGIDO: Usando 'discount'
         image: imageUrl,
         createdAt: new Date()
       };
@@ -134,19 +136,37 @@ const NewProduct = () => {
             </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Precio ($)</label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Precio Regular ($)</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+
+            {/* NUEVO CAMPO: Porcentaje de Descuento */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Descuento (%)</label>
+              <input
+                type="number"
+                name="discount" // <-- CORREGIDO: Usando 'discount'
+                value={formData.discount} // <-- CORREGIDO: Usando 'discount'
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
+                placeholder="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+            </div>
           </div>
         </div>
 

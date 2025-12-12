@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { db } from '../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { getPriceDetails } from '../utils/productUtils';
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
@@ -28,14 +29,14 @@ const SearchResultsPage = () => {
         // 2. Filtramos los resultados
         if (queryText) {
           const lowerQuery = queryText.toLowerCase();
-          const results = allProducts.filter(product => 
-            // NEW: Incluir búsqueda por brand y model
-            (product.brand && product.brand.toLowerCase().includes(lowerQuery)) ||
-            (product.model && product.model.toLowerCase().includes(lowerQuery)) ||
-            product.name.toLowerCase().includes(lowerQuery) || // name sigue siendo la concatenación
-            product.category.toLowerCase().includes(lowerQuery) ||
-            (product.description && product.description.toLowerCase().includes(lowerQuery))
-          );
+          const results = allProducts.filter(product => {
+            const brandMatch = (product.brand || '').toLowerCase().includes(lowerQuery);
+            const modelMatch = (product.model || '').toLowerCase().includes(lowerQuery);
+            const nameMatch = (product.name || '').toLowerCase().includes(lowerQuery); 
+            const categoryMatch = (product.category || '').toLowerCase().includes(lowerQuery);
+            const descriptionMatch = (product.description || '').toLowerCase().includes(lowerQuery);
+            return brandMatch || modelMatch || nameMatch || categoryMatch || descriptionMatch;
+          });
           setFilteredProducts(results);
         } else {
           setFilteredProducts([]);
@@ -75,7 +76,10 @@ const SearchResultsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product) => {
+              const priceDetails = getPriceDetails(product.price, product.discount); 
+              
+              return (
               <Link 
                 to={`/product/${product.id}`} 
                 key={product.id} 
@@ -87,6 +91,12 @@ const SearchResultsPage = () => {
                     alt={product.name}
                     className="w-full h-64 object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
+                  {/* Etiqueta de Descuento */}
+                  {priceDetails.isDiscounted && (
+                    <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        -{priceDetails.discount}%
+                    </div>
+                  )}
                 </div>
                 <div className="p-5">
                   <p className="text-sm text-gray-500 mb-1">{product.category}</p>
@@ -94,10 +104,17 @@ const SearchResultsPage = () => {
                     {/* NEW: Mostrar nombre concatenado */}
                     {`${product.brand || product.name} ${product.model || ''}`.trim()}
                   </h3>
-                  <span className="text-xl font-bold text-dukicks-blue">${Number(product.price).toFixed(2)}</span>
+                  <div className="flex items-center space-x-2">
+                    {priceDetails.isDiscounted && (
+                        <span className="text-base text-gray-500 line-through">${priceDetails.regularPrice.toFixed(2)}</span>
+                    )}
+                    <span className={`text-xl font-bold ${priceDetails.isDiscounted ? 'text-red-500' : 'text-dukicks-blue'}`}>
+                        ${priceDetails.finalPrice.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </Link>
-            ))}
+            )})}
           </div>
         )}
       </main>

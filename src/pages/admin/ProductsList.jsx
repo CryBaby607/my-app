@@ -43,6 +43,24 @@ const ProductsList = () => {
       }
     }
   };
+  
+  // Función para obtener el precio a mostrar en la tabla (incluye descuento si aplica)
+  const getDisplayPrice = (product) => {
+    const price = Number(product.price);
+    const discount = Number(product.discount) || 0; // <-- CORREGIDO: Usando 'discount'
+    
+    if (discount > 0) {
+      const finalPrice = price * (1 - (discount / 100));
+      return (
+        <div className="flex flex-col">
+          <span className="text-red-600 font-bold">${finalPrice.toFixed(2)}</span>
+          <span className="text-xs text-gray-500 line-through">${price.toFixed(2)}</span>
+        </div>
+      );
+    }
+    
+    return <span>${price.toFixed(2)}</span>;
+  };
 
   if (loading) return <div className="flex justify-center p-10"><LoadingSpinner size="lg" /></div>;
 
@@ -89,7 +107,7 @@ const ProductsList = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-gray-700 font-medium">
-                  ${Number(product.price).toFixed(2)}
+                  {getDisplayPrice(product)}
                 </td>
                 <td className="px-6 py-4 text-center">
                   <div className="flex justify-center space-x-3">

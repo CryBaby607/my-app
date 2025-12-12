@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { db } from '../firebase/config'; // Importamos la DB
 import { doc, getDoc } from 'firebase/firestore'; // Funciones para obtener un solo documento
 import LoadingSpinner from '../components/LoadingSpinner';
+import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -51,6 +52,7 @@ const ProductPage = () => {
       return;
     }
     
+    // Pasamos el producto completo. CartContext calculará el precio final.
     addToCart(product, quantity, selectedSize);
     
     setBtnText('¡Agregado!');
@@ -65,10 +67,13 @@ const ProductPage = () => {
       return;
     }
 
-    const total = product.price * quantity;
+    const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+    const finalPrice = priceDetails.finalPrice; // Precio final con descuento (o regular)
+    
+    const total = finalPrice * quantity;
     
     const message = `Hola DUKICKS, me gustaría comprar este producto:%0A%0A` +
-      `- ${quantity}x ${product.name} (Talla: ${selectedSize}) - $${product.price}%0A%0A` +
+      `- ${quantity}x ${product.name} (Talla: ${selectedSize}) - $${finalPrice.toFixed(2)}%0A%0A` +
       `*Total a pagar: $${total.toFixed(2)}*`;
 
     const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
@@ -83,6 +88,8 @@ const ProductPage = () => {
       <Link to="/" className="text-dukicks-blue hover:underline">Volver a la tienda</Link>
     </div>
   );
+
+  const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -119,7 +126,21 @@ const ProductPage = () => {
                 {product.category}
               </p>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
-              <p className="text-3xl font-bold text-gray-900">${product.price.toFixed(2)}</p>
+              
+              {/* Bloque de Precio con Descuento */}
+              <div className="flex items-center space-x-3">
+                {priceDetails.isDiscounted && (
+                  <p className="text-2xl text-gray-400 line-through">
+                    ${priceDetails.regularPrice.toFixed(2)}
+                  </p>
+                )}
+                <p className={`text-3xl font-bold ${priceDetails.isDiscounted ? 'text-red-500' : 'text-gray-900'}`}>
+                  ${priceDetails.finalPrice.toFixed(2)}
+                </p>
+                {priceDetails.isDiscounted && (
+                    <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">{priceDetails.discount}% OFF</span>
+                )}
+              </div>
             </div>
 
             <div className="prose text-gray-600">

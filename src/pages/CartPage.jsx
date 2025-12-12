@@ -17,7 +17,8 @@ const CartPage = () => {
 
     let message = "Hola DUKICKS, me gustaría completar mi pedido:%0A%0A";
     cartItems.forEach(item => {
-      message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price}%0A`;
+      // El precio del item ya es el precio final con descuento, si aplica
+      message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price.toFixed(2)}%0A`; 
     });
     message += `%0A*Total: $${total.toFixed(2)}*`;
 
@@ -56,7 +57,16 @@ const CartPage = () => {
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-bold text-lg">{item.name}</h3>
                     <p className="text-gray-500 text-sm mb-2">Talla: {item.size}</p>
-                    <div className="text-dukicks-blue font-bold text-xl">${item.price.toFixed(2)}</div>
+                    {/* Bloque de Precio con Descuento */}
+                    <div className="flex items-center space-x-2">
+                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
+                            <span className="text-gray-500 text-base line-through">${item.regularPrice.toFixed(2)}</span>
+                        )}
+                        <div className="text-dukicks-blue font-bold text-xl">${item.price.toFixed(2)}</div>
+                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
+                            <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded-full">{item.discount}% OFF</span>
+                        )}
+                    </div>
                   </div>
                   
                   <div className="flex items-center mt-4 sm:mt-0">

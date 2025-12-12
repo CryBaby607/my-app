@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { db } from '../firebase/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
 
 const CategoryPage = ({ categoryKey }) => {
   const [items, setItems] = useState([]);
@@ -41,9 +42,19 @@ const CategoryPage = ({ categoryKey }) => {
 
         // 3. Ordenamiento (lo hacemos en el cliente para evitar crear índices complejos en Firebase por ahora)
         if (sortOption === 'price-asc') {
-          fetchedItems.sort((a, b) => Number(a.price) - Number(b.price));
+          fetchedItems.sort((a, b) => {
+            // Se calcula el precio final para ordenar correctamente
+            const priceA = getPriceDetails(a.price, a.discount).finalPrice; // <-- CORREGIDO: Usando a.discount
+            const priceB = getPriceDetails(b.price, b.discount).finalPrice; // <-- CORREGIDO: Usando b.discount
+            return priceA - priceB;
+          });
         } else if (sortOption === 'price-desc') {
-          fetchedItems.sort((a, b) => Number(b.price) - Number(a.price));
+           fetchedItems.sort((a, b) => {
+            // Se calcula el precio final para ordenar correctamente
+            const priceA = getPriceDetails(a.price, a.discount).finalPrice; // <-- CORREGIDO: Usando a.discount
+            const priceB = getPriceDetails(b.price, b.discount).finalPrice; // <-- CORREGIDO: Usando b.discount
+            return priceB - priceA;
+          });
         } else if (sortOption === 'recent') {
            // Si tienes fecha, podrías ordenar por fecha aquí
            // fetchedItems.sort((a, b) => b.createdAt - a.createdAt);
@@ -88,7 +99,10 @@ const CategoryPage = ({ categoryKey }) => {
             </div>
           ) : items.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {items.map((product) => (
+              {items.map((product) => {
+                const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+
+                return (
                 <Link 
                   to={`/product/${product.id}`} 
                   key={product.id} 
@@ -100,6 +114,12 @@ const CategoryPage = ({ categoryKey }) => {
                       alt={product.name}
                       className="w-full h-64 object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
+                    {/* Etiqueta de Descuento */}
+                    {priceDetails.isDiscounted && (
+                        <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            -{priceDetails.discount}%
+                        </div>
+                    )}
                   </div>
                   <div className="p-5">
                     <p className="text-sm text-gray-500 mb-1">{product.category}</p>
@@ -107,12 +127,17 @@ const CategoryPage = ({ categoryKey }) => {
                       {/* NEW: Mostrar nombre concatenado */}
                       {`${product.brand || product.name} ${product.model || ''}`.trim()}
                     </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-dukicks-blue">${Number(product.price).toFixed(2)}</span>
+                    <div className="flex items-center space-x-2">
+                      {priceDetails.isDiscounted && (
+                          <span className="text-base text-gray-500 line-through">${priceDetails.regularPrice.toFixed(2)}</span>
+                      )}
+                      <span className={`text-xl font-bold ${priceDetails.isDiscounted ? 'text-red-500' : 'text-dukicks-blue'}`}>
+                          ${priceDetails.finalPrice.toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </Link>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="text-center py-20 bg-gray-50 rounded-xl">

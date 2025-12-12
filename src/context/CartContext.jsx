@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
 
 const CartContext = createContext();
 
@@ -20,6 +21,9 @@ export const CartProvider = ({ children }) => {
 
   // Añadir producto
   const addToCart = (product, quantity, size) => {
+    // Calculamos los detalles del precio al añadir al carrito
+    const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+
     setCartItems(prevItems => {
       // Verificar si el producto con esa ID y esa TALLA ya existe
       const existingItemIndex = prevItems.findIndex(
@@ -33,7 +37,14 @@ export const CartProvider = ({ children }) => {
         return newItems;
       } else {
         // Si no existe, lo agregamos nuevo
-        return [...prevItems, { ...product, quantity, size }];
+        return [...prevItems, { 
+          ...product, 
+          quantity, 
+          size,
+          price: priceDetails.finalPrice, // Almacenamos el precio de venta (final)
+          regularPrice: priceDetails.regularPrice, // Almacenamos precio original para mostrar
+          discount: priceDetails.discount, // <-- CORREGIDO: Almacenamos el descuento
+        }];
       }
     });
   };
