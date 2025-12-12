@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
+import { db } from '../firebase/config'; // Importamos la DB
+import { doc, getDoc } from 'firebase/firestore'; // Funciones para obtener un solo documento
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -17,15 +19,30 @@ const ProductPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Buscar en la BD centralizada
-    const foundProduct = products.find(p => p.id === parseInt(id));
     
-    if (foundProduct) {
-      setProduct(foundProduct);
-    } else {
-       console.error("Producto no encontrado");
-    }
-    setLoading(false);
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        // 1. Referencia al documento específico por ID
+        const docRef = doc(db, "products", id);
+        // 2. Obtener el documento
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          // 3. Guardar datos en el estado
+          setProduct({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          console.error("Producto no encontrado en Firebase");
+          setProduct(null);
+        }
+      } catch (error) {
+        console.error("Error obteniendo producto:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   const handleAddToCart = () => {
@@ -42,7 +59,6 @@ const ProductPage = () => {
     }, 2000);
   };
 
-  // --- NUEVA LÓGICA DE COMPRA DIRECTA ---
   const handleBuyNow = () => {
     if (!selectedSize) {
       alert('Por favor selecciona una talla para continuar');
@@ -51,19 +67,22 @@ const ProductPage = () => {
 
     const total = product.price * quantity;
     
-    // Mensaje personalizado para un solo producto
     const message = `Hola DUKICKS, me gustaría comprar este producto:%0A%0A` +
       `- ${quantity}x ${product.name} (Talla: ${selectedSize}) - $${product.price}%0A%0A` +
       `*Total a pagar: $${total.toFixed(2)}*`;
 
-    // Reemplaza con tu número real
     const phoneNumber = "5215555555555"; 
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" /></div>;
   
-  if (!product) return <div className="min-h-screen flex items-center justify-center">Producto no encontrado. <Link to="/" className="ml-2 text-blue-500">Volver</Link></div>;
+  if (!product) return (
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Producto no encontrado</h2>
+      <Link to="/" className="text-dukicks-blue hover:underline">Volver a la tienda</Link>
+    </div>
+  );
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -82,18 +101,18 @@ const ProductPage = () => {
         </div>
 
         <div className="flex flex-col md:flex-row gap-12">
-          {/* Columna Izquierda: Imagen */}
+          {/* Imagen */}
           <div className="md:w-1/2">
-            <div className="rounded-3xl overflow-hidden shadow-lg border border-gray-100 bg-gray-50">
+            <div className="rounded-3xl overflow-hidden shadow-lg border border-gray-100 bg-gray-50 aspect-w-1 aspect-h-1">
               <img 
                 src={product.image} 
                 alt={product.name} 
-                className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
           </div>
 
-          {/* Columna Derecha: Detalles */}
+          {/* Detalles */}
           <div className="md:w-1/2 space-y-6">
             <div>
               <p className="text-dukicks-blue font-semibold tracking-wide uppercase text-sm mb-2">
@@ -114,19 +133,23 @@ const ProductPage = () => {
                 <button className="text-sm text-dukicks-blue hover:underline">Guía de tallas</button>
               </div>
               <div className="grid grid-cols-4 gap-3">
-                {product.sizes && product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`py-3 rounded-lg border text-center font-medium transition-all ${
-                      selectedSize === size
-                        ? 'border-dukicks-blue bg-dukicks-blue text-white shadow-md'
-                        : 'border-gray-200 hover:border-gray-400 text-gray-700'
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {product.sizes && product.sizes.length > 0 ? (
+                  product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`py-3 rounded-lg border text-center font-medium transition-all ${
+                        selectedSize === size
+                          ? 'border-dukicks-blue bg-dukicks-blue text-white shadow-md'
+                          : 'border-gray-200 hover:border-gray-400 text-gray-700'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm col-span-4">No hay tallas registradas.</p>
+                )}
               </div>
             </div>
 
@@ -150,7 +173,7 @@ const ProductPage = () => {
               </div>
             </div>
 
-            {/* Botones de Acción */}
+            {/* Botones */}
             <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={handleAddToCart}
@@ -161,7 +184,6 @@ const ProductPage = () => {
                 {btnText}
               </button>
               
-              {/* BOTÓN CONECTADO A WHATSAPP */}
               <button 
                 onClick={handleBuyNow}
                 className="flex-1 bg-green-500 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-transform transform hover:-translate-y-1 shadow-lg flex items-center justify-center"

@@ -2,40 +2,64 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { products } from '../data/products'; // Importamos la fuente única de datos
+import { db } from '../firebase/config';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const CategoryPage = ({ categoryKey }) => {
   const [items, setItems] = useState([]);
-  const [sortOption, setSortOption] = useState('recent'); // Estado para controlar el orden
+  const [loading, setLoading] = useState(true);
+  const [sortOption, setSortOption] = useState('recent');
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
-    // 1. Mapeo para traducir la URL a la categoría de la BD
-    const categoryMap = {
-      'hombres': 'Hombres',
-      'mujeres': 'Mujer',
-      'ninos': 'Niños',
-      'gorras': 'Gorras'
+    const fetchCategoryProducts = async () => {
+      setLoading(true);
+      window.scrollTo(0, 0);
+
+      try {
+        // 1. Mapeo de URL a nombre exacto en Firebase
+        // IMPORTANTE: Estos deben coincidir con lo que guardaste en el Admin (NewProduct.jsx)
+        const categoryMap = {
+          'hombres': 'Hombres',
+          'mujeres': 'Mujer',
+          'ninos': 'Niños',
+          'gorras': 'Gorras'
+        };
+
+        const targetCategory = categoryMap[categoryKey];
+
+        // 2. Consulta a Firebase
+        const productsRef = collection(db, "products");
+        const q = query(productsRef, where("category", "==", targetCategory));
+        
+        const querySnapshot = await getDocs(q);
+        
+        let fetchedItems = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // 3. Ordenamiento (lo hacemos en el cliente para evitar crear índices complejos en Firebase por ahora)
+        if (sortOption === 'price-asc') {
+          fetchedItems.sort((a, b) => Number(a.price) - Number(b.price));
+        } else if (sortOption === 'price-desc') {
+          fetchedItems.sort((a, b) => Number(b.price) - Number(a.price));
+        } else if (sortOption === 'recent') {
+           // Si tienes fecha, podrías ordenar por fecha aquí
+           // fetchedItems.sort((a, b) => b.createdAt - a.createdAt);
+        }
+
+        setItems(fetchedItems);
+      } catch (error) {
+        console.error("Error cargando categoría:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const targetCategory = categoryMap[categoryKey];
-
-    // 2. Filtramos los productos de la BD central
-    let filteredItems = products.filter(p => p.category === targetCategory);
-
-    // 3. Aplicamos el ordenamiento según la selección
-    if (sortOption === 'price-asc') {
-      filteredItems.sort((a, b) => a.price - b.price);
-    } else if (sortOption === 'price-desc') {
-      filteredItems.sort((a, b) => b.price - a.price);
-    }
-    // Si es 'recent', dejamos el orden por defecto (como vienen en el array)
-
-    // Actualizamos el estado
-    setItems([...filteredItems]);
+    fetchCategoryProducts();
     
-  }, [categoryKey, sortOption]); // Se ejecuta cuando cambia la categoría O el orden
+  }, [categoryKey, sortOption]); // Recargar si cambia la categoría o el orden
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -47,7 +71,6 @@ const CategoryPage = ({ categoryKey }) => {
           <div className="flex justify-between items-center mb-6">
             <span className="text-gray-500">{items.length} productos encontrados</span>
             
-            {/* SELECTOR DE ORDENAMIENTO ACTIVO */}
             <select 
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
@@ -59,7 +82,11 @@ const CategoryPage = ({ categoryKey }) => {
             </select>
           </div>
 
-          {items.length > 0 ? (
+          {loading ? (
+            <div className="py-20 flex justify-center">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : items.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {items.map((product) => (
                 <Link 
@@ -76,16 +103,17 @@ const CategoryPage = ({ categoryKey }) => {
                   </div>
                   <div className="p-5">
                     <p className="text-sm text-gray-500 mb-1">{product.category}</p>
-                    <h3 className="font-bold text-gray-900 text-lg mb-2">{product.name}</h3>
+                    <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">{product.name}</h3>
                     <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-dukicks-blue">${product.price.toFixed(2)}</span>
+                      <span className="text-xl font-bold text-dukicks-blue">${Number(product.price).toFixed(2)}</span>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
+            <div className="text-center py-20 bg-gray-50 rounded-xl">
+              <i className="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
               <p className="text-gray-500 mb-4">No hay productos disponibles en esta categoría.</p>
               <Link to="/" className="text-dukicks-blue font-semibold hover:underline">
                 Volver al inicio
