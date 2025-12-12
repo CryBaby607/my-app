@@ -29,7 +29,10 @@ const SearchResultsPage = () => {
         if (queryText) {
           const lowerQuery = queryText.toLowerCase();
           const results = allProducts.filter(product => 
-            product.name.toLowerCase().includes(lowerQuery) ||
+            // NEW: Incluir búsqueda por brand y model
+            (product.brand && product.brand.toLowerCase().includes(lowerQuery)) ||
+            (product.model && product.model.toLowerCase().includes(lowerQuery)) ||
+            product.name.toLowerCase().includes(lowerQuery) || // name sigue siendo la concatenación
             product.category.toLowerCase().includes(lowerQuery) ||
             (product.description && product.description.toLowerCase().includes(lowerQuery))
           );
@@ -87,7 +90,10 @@ const SearchResultsPage = () => {
                 </div>
                 <div className="p-5">
                   <p className="text-sm text-gray-500 mb-1">{product.category}</p>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2">{product.name}</h3>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">
+                    {/* NEW: Mostrar nombre concatenado */}
+                    {`${product.brand || product.name} ${product.model || ''}`.trim()}
+                  </h3>
                   <span className="text-xl font-bold text-dukicks-blue">${Number(product.price).toFixed(2)}</span>
                 </div>
               </Link>

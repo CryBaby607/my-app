@@ -8,9 +8,10 @@ const NewProduct = () => {
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
-    name: '',
+    brand: '',
+    model: '', 
     price: '',
-    category: 'Hombres', // Valor por defecto
+    category: 'Hombres',
     description: '',
     sizes: [], 
   });
@@ -81,6 +82,8 @@ const NewProduct = () => {
 
       const newProduct = {
         ...formData,
+        // NEW: Concatena brand y model para el campo 'name'
+        name: `${formData.brand} ${formData.model}`.trim(),
         price: parseFloat(formData.price),
         image: imageUrl,
         createdAt: new Date()
@@ -106,18 +109,31 @@ const NewProduct = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* NEW: Marca y Modelo en lugar de Nombre */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
-              placeholder="Ej: Nike Air Force 1"
-              required
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-2">Marca / Modelo</label>
+            <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
+                  placeholder="Marca (Ej: Nike)"
+                  required
+                />
+                <input
+                  type="text"
+                  name="model"
+                  value={formData.model}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
+                  placeholder="Modelo (Ej: Air Force 1)"
+                  required
+                />
+            </div>
           </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Precio ($)</label>
             <input

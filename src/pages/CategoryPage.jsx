@@ -103,7 +103,10 @@ const CategoryPage = ({ categoryKey }) => {
                   </div>
                   <div className="p-5">
                     <p className="text-sm text-gray-500 mb-1">{product.category}</p>
-                    <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">{product.name}</h3>
+                    <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">
+                      {/* NEW: Mostrar nombre concatenado */}
+                      {`${product.brand || product.name} ${product.model || ''}`.trim()}
+                    </h3>
                     <div className="flex items-center justify-between">
                       <span className="text-xl font-bold text-dukicks-blue">${Number(product.price).toFixed(2)}</span>
                     </div>

@@ -71,7 +71,7 @@ const ProductPage = () => {
       `- ${quantity}x ${product.name} (Talla: ${selectedSize}) - $${product.price}%0A%0A` +
       `*Total a pagar: $${total.toFixed(2)}*`;
 
-    const phoneNumber = "5215555555555"; 
+    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 

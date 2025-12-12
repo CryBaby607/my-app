@@ -10,7 +10,8 @@ const EditProduct = () => {
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
-    name: '',
+    brand: '',
+    model: '', 
     price: '',
     category: '',
     description: '',
@@ -42,8 +43,14 @@ const EditProduct = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setFormData(docSnap.data());
-          setImagePreview(docSnap.data().image);
+          const data = docSnap.data();
+          // NEW: Usar 'brand' y 'model' si existen, o fallback a 'name'
+          setFormData({
+            ...data,
+            brand: data.brand || data.name, 
+            model: data.model || '',       
+          });
+          setImagePreview(data.image);
         } else {
           alert("Producto no encontrado");
           navigate('/admin/products');
@@ -109,6 +116,8 @@ const EditProduct = () => {
       
       await updateDoc(productRef, {
         ...formData,
+        // NEW: Concatena brand y model para el campo 'name'
+        name: `${formData.brand} ${formData.model}`.trim(),
         price: parseFloat(formData.price),
         image: imageUrl,
         updatedAt: new Date()
@@ -134,17 +143,31 @@ const EditProduct = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* NEW: Marca y Modelo en lugar de Nombre */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
-              required
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-2">Marca / Modelo</label>
+            <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
+                  placeholder="Marca"
+                  required
+                />
+                <input
+                  type="text"
+                  name="model"
+                  value={formData.model}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
+                  placeholder="Modelo"
+                  required
+                />
+            </div>
           </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Precio ($)</label>
             <input

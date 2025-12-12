@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useCart } from '../context/CartContext'; // <--- IMPORTANTE: Importar el contexto
+import { useCart } from '../context/CartContext';
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
@@ -22,7 +22,7 @@ const CartPage = () => {
     message += `%0A*Total: $${total.toFixed(2)}*`;
 
     // Reemplaza el número con el real de la tienda
-    const phoneNumber = "5215555555555"; 
+    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };
 

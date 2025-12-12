@@ -77,7 +77,8 @@ const ProductsList = () => {
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                     </div>
                     <div className="ml-4">
-                      <div className="font-medium text-gray-900">{product.name}</div>
+                      {/* NEW: Mostrar nombre concatenado */}
+                      <div className="font-medium text-gray-900">{`${product.brand || product.name} ${product.model || ''}`.trim()}</div>
                       <div className="text-gray-500 text-xs truncate max-w-xs">{product.description}</div>
                     </div>
                   </div>

@@ -91,7 +91,8 @@ const FeaturedProducts = () => {
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="mb-2">
                     <Link to={`/product/${product.id}`} className="font-bold text-lg text-gray-900 hover:text-dukicks-blue transition-colors line-clamp-1">
-                      {product.name}
+                      {/* NEW: Mostrar nombre concatenado */}
+                      {`${product.brand || product.name} ${product.model || ''}`.trim()}
                     </Link>
                   </div>
                   <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-grow">
