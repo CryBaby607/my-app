@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Agregamos useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 const Header = () => {
   const { getCartCount } = useCart();
-  const navigate = useNavigate(); // Hook para navegar programáticamente
+  const navigate = useNavigate();
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('Inicio');
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para guardar lo que escribe el usuario
+  const [searchTerm, setSearchTerm] = useState('');
 
   const navLinks = [
-    { name: 'Inicio', icon: 'fa-home', path: '/' },
-    { name: 'Gorras', icon: 'fa-hat-cowboy', path: '/gorras' },
-    { name: 'Hombres', icon: 'fa-male', path: '/hombres' },
-    { name: 'Mujer', icon: 'fa-female', path: '/mujer' },
-    { name: 'Niños', icon: 'fa-child', path: '/ninos' },
+    { name: 'Inicio', path: '/' },
+    { name: 'Gorras', path: '/gorras' },
+    { name: 'Hombres', path: '/hombres' },
+    { name: 'Mujer', path: '/mujer' },
+    { name: 'Niños', path: '/ninos' },
   ];
 
   const handleNavClick = (linkName) => {
@@ -26,16 +26,12 @@ const Header = () => {
     }
   };
 
-  // Función para manejar el envío del formulario de búsqueda
   const handleSearchSubmit = (e) => {
-    e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault();
     if (searchTerm.trim()) {
-      // Navegamos a la página de resultados con el término en la URL
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
-      // Cerramos los menús móviles por si acaso
       setIsMobileSearchOpen(false);
       setIsMobileMenuOpen(false);
-      // Opcional: Limpiar el buscador tras buscar
       setSearchTerm(''); 
     }
   };
@@ -149,7 +145,7 @@ const Header = () => {
           </div>
         )}
 
-        {/* Menú Móvil */}
+        {/* Menú Móvil - Corregido sin iconos */}
         <div className={`mobile-menu md:hidden border-t border-gray-800 ${isMobileMenuOpen ? 'open' : ''}`}>
            <div className="py-4 space-y-3">
             {navLinks.map((link) => (
@@ -159,7 +155,6 @@ const Header = () => {
                 className="block nav-link font-medium py-3 px-4 rounded-lg hover:bg-gray-900 transition-colors text-gray-300 hover:text-white"
                 onClick={() => handleNavClick(link.name)}
               >
-                <i className={`fas ${link.icon} mr-3`}></i>
                 {link.name}
               </Link>
             ))}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Categories = () => {
   const categories = [
@@ -10,7 +11,8 @@ const Categories = () => {
       image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       buttonColor: 'bg-black hover:bg-gray-800',
       gradientFrom: 'from-gray-900',
-      gradientTo: 'to-gray-700'
+      gradientTo: 'to-gray-700',
+      path: '/gorras'
     },
     {
       id: 2,
@@ -20,7 +22,8 @@ const Categories = () => {
       image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       buttonColor: 'bg-gradient-to-r from-dukicks-blue to-blue-500 hover:opacity-90',
       gradientFrom: 'from-dukicks-blue',
-      gradientTo: 'to-blue-400'
+      gradientTo: 'to-blue-400',
+      path: '/hombres'
     },
     {
       id: 3,
@@ -30,7 +33,8 @@ const Categories = () => {
       image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       buttonColor: 'bg-pink-500 hover:bg-pink-600',
       gradientFrom: 'from-pink-500',
-      gradientTo: 'to-pink-400'
+      gradientTo: 'to-pink-400',
+      path: '/mujer'
     },
     {
       id: 4,
@@ -40,7 +44,8 @@ const Categories = () => {
       image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
       buttonColor: 'bg-yellow-500 hover:bg-yellow-600',
       gradientFrom: 'from-yellow-500',
-      gradientTo: 'to-yellow-400'
+      gradientTo: 'to-yellow-400',
+      path: '/ninos'
     }
   ];
 
@@ -60,26 +65,29 @@ const Categories = () => {
           {categories.map((category) => (
             <div
               key={category.id}
-              className="category-card bg-white rounded-2xl p-6 shadow-soft hover:shadow-xl transition-all duration-300 border border-gray-100"
+              className="category-card bg-white rounded-2xl p-6 shadow-soft hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col justify-between"
             >
-              <div
-                className={`w-20 h-20 bg-gradient-to-br ${category.gradientFrom} ${category.gradientTo} rounded-full flex items-center justify-center mb-6 mx-auto`}
+              <div>
+                {/* Se eliminó el div del círculo con el icono aquí */}
+                
+                <h3 className="text-2xl font-bold text-center mb-3 text-gray-900">{category.title}</h3>
+                <p className="text-gray-600 text-center mb-6 text-sm">{category.description}</p>
+                <div className="aspect-w-16 aspect-h-9 mb-4 rounded-xl overflow-hidden">
+                  <img
+                    src={category.image}
+                    alt={category.title}
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+              </div>
+              
+              <Link 
+                to={category.path}
+                className={`w-full ${category.buttonColor} text-white py-3 rounded-lg font-semibold transition-colors flex items-center justify-center`}
               >
-                <i className={`fas ${category.icon} text-white text-3xl`}></i>
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-3 text-gray-900">{category.title}</h3>
-              <p className="text-gray-600 text-center mb-6 text-sm">{category.description}</p>
-              <div className="aspect-w-16 aspect-h-9 mb-4 rounded-xl overflow-hidden">
-                <img
-                  src={category.image}
-                  alt={category.title}
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-              <button className={`w-full ${category.buttonColor} text-white py-3 rounded-lg font-semibold transition-colors flex items-center justify-center`}>
                 Explorar
                 <i className="fas fa-chevron-right ml-2 text-sm"></i>
-              </button>
+              </Link>
             </div>
           ))}
         </div>
