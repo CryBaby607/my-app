@@ -2,23 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useCart } from '../context/CartContext'; // <--- IMPORTANTE: Importar el contexto
-
-// Simulamos una "Base de Datos" unificada
-const allProductsDB = [
-  { id: 101, name: 'Nike Air Max', price: 129.99, category: 'Hombres', description: 'El clásico reinventado con mayor amortiguación.', image: 'https://images.unsplash.com/photo-1605348532760-6753d6c43329?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['40', '41', '42', '43', '44'] },
-  { id: 102, name: 'Adidas Ultraboost', price: 159.99, category: 'Hombres', description: 'Energía sin fin para tus carreras diarias.', image: 'https://images.unsplash.com/photo-1587563871167-1ee797455c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['40', '41', '42'] },
-  { id: 103, name: 'Puma RS-X', price: 99.99, category: 'Hombres', description: 'Estilo retro-futurista con comodidad extrema.', image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['39', '40', '41', '42'] },
-  { id: 104, name: 'Jordan Retro High', price: 179.99, category: 'Hombres', description: 'El icono que lo empezó todo.', image: 'https://images.unsplash.com/photo-1579338559194-a162d19bf842?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['41', '42', '43', '44', '45'] },
-  { id: 201, name: 'Nike Air Force 1', price: 109.99, category: 'Mujer', description: 'Leyenda del baloncesto convertida en icono urbano.', image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['36', '37', '38', '39'] },
-  { id: 202, name: 'Converse Chuck 70', price: 85.00, category: 'Mujer', description: 'Las Chuck 70 mezclan detalles de los 70 con una artesanía impecable.', image: 'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['36', '37', '38', '39'] },
-  { id: 301, name: 'Nike Kids Star', price: 45.99, category: 'Niños', description: 'Comodidad estelar para los más pequeños.', image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['28', '29', '30', '31'] },
-  { id: 401, name: 'NY Yankees Classic', price: 35.99, category: 'Gorras', description: 'La gorra más famosa del mundo.', image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', sizes: ['S/M', 'M/L', 'L/XL'] },
-];
+import { useCart } from '../context/CartContext';
+import { products } from '../data/products';
 
 const ProductPage = () => {
   const { id } = useParams();
-  const { addToCart } = useCart(); // <--- Usamos el hook del contexto
+  const { addToCart } = useCart();
   
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
@@ -28,21 +17,15 @@ const ProductPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Buscar producto por ID
-    const foundProduct = allProductsDB.find(p => p.id === parseInt(id));
+    // Buscar en la BD centralizada
+    const foundProduct = products.find(p => p.id === parseInt(id));
     
-    // Fallback por si el ID no existe en nuestra "DB" simulada
-    const productData = foundProduct || {
-      id: parseInt(id),
-      name: 'Producto Demo',
-      price: 99.99,
-      category: 'General',
-      description: 'Este es un producto de demostración generado dinámicamente.',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      sizes: ['38', '40', '42', '44']
-    };
-
-    setProduct(productData);
+    if (foundProduct) {
+      setProduct(foundProduct);
+    } else {
+        // Manejo básico de error o producto no encontrado
+       console.error("Producto no encontrado");
+    }
     setLoading(false);
   }, [id]);
 
@@ -52,10 +35,8 @@ const ProductPage = () => {
       return;
     }
     
-    // Llamada a la función global para añadir al carrito
     addToCart(product, quantity, selectedSize);
     
-    // Feedback visual en el botón
     setBtnText('¡Agregado!');
     setTimeout(() => {
       setBtnText('Agregar al Carrito');
@@ -63,6 +44,8 @@ const ProductPage = () => {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
+  
+  if (!product) return <div className="min-h-screen flex items-center justify-center">Producto no encontrado. <Link to="/" className="ml-2 text-blue-500">Volver</Link></div>;
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -73,7 +56,9 @@ const ProductPage = () => {
         <div className="text-sm text-gray-500 mb-8">
           <Link to="/" className="hover:text-dukicks-blue">Inicio</Link> 
           <span className="mx-2">/</span>
-          <Link to={`/${product.category.toLowerCase()}`} className="hover:text-dukicks-blue">{product.category}</Link>
+          <Link to={`/${product.category === 'Niños' ? 'ninos' : product.category.toLowerCase()}`} className="hover:text-dukicks-blue">
+            {product.category}
+          </Link>
           <span className="mx-2">/</span>
           <span className="text-gray-900 font-medium">{product.name}</span>
         </div>
@@ -111,7 +96,7 @@ const ProductPage = () => {
                 <button className="text-sm text-dukicks-blue hover:underline">Guía de tallas</button>
               </div>
               <div className="grid grid-cols-4 gap-3">
-                {product.sizes.map((size) => (
+                {product.sizes && product.sizes.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -157,6 +142,7 @@ const ProductPage = () => {
               >
                 {btnText}
               </button>
+              {/* Botón comprar ahora (placeholder para futura implementación) */}
               <button className="flex-1 bg-green-500 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-transform transform hover:-translate-y-1 shadow-lg flex items-center justify-center">
                 <i className="fab fa-whatsapp mr-2 text-xl"></i>
                 Comprar Ahora
