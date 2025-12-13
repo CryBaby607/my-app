@@ -83,10 +83,9 @@ const NewProduct = () => {
 
       const newProduct = {
         ...formData,
-        // NEW: Concatena brand y model para el campo 'name'
         name: `${formData.brand} ${formData.model}`.trim(),
         price: parseFloat(formData.price),
-        discount: parseFloat(formData.discount) || 0, // <-- CORREGIDO: Usando 'discount'
+        discount: parseFloat(formData.discount) || 0,
         image: imageUrl,
         createdAt: new Date()
       };
@@ -111,7 +110,6 @@ const NewProduct = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* NEW: Marca y Modelo en lugar de Nombre */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Marca / Modelo</label>
             <div className="grid grid-cols-2 gap-4">
@@ -152,13 +150,12 @@ const NewProduct = () => {
               />
             </div>
 
-            {/* NUEVO CAMPO: Porcentaje de Descuento */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Descuento (%)</label>
               <input
                 type="number"
-                name="discount" // <-- CORREGIDO: Usando 'discount'
-                value={formData.discount} // <-- CORREGIDO: Usando 'discount'
+                name="discount"
+                value={formData.discount}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
                 placeholder="0"

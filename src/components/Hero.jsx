@@ -37,14 +37,6 @@ const Hero = () => {
               </p>
             </div>
 
-            <div className="mt-8">
-              <button className="bg-gradient-to-r from-black to-dukicks-blue text-white px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center group">
-                <i className="fas fa-store mr-3"></i>
-                Conoce Nuestra Tienda
-                <i className="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
-              </button>
-            </div>
-
             <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
               {stats.map((stat, index) => (
                 <div key={index} className="stat-card rounded-xl p-5 text-center shadow-soft">

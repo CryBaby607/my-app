@@ -1,4 +1,3 @@
-// crybaby607/my-app/my-app-68109e4c2a314fbab801d09bbf6a5bacc4fddf45/src/pages/admin/EditProduct.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../../firebase/config';
@@ -18,7 +17,7 @@ const EditProduct = () => {
     description: '',
     sizes: [],
     image: '',
-    discount: '0' // <-- CORREGIDO: Usando 'discount'
+    discount: '0'
   });
   
   const [imageFile, setImageFile] = useState(null);

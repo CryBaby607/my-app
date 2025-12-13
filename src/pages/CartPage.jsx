@@ -8,19 +8,26 @@ const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? 10.00 : 0; // Envío solo si hay productos
+  const shipping = subtotal > 0 ? 10.00 : 0;
   const total = subtotal + shipping;
 
   // Función para generar el link de WhatsApp con el pedido
   const handleWhatsAppCheckout = () => {
     if (cartItems.length === 0) return;
 
-    let message = "Hola DUKICKS, me gustaría completar mi pedido:%0A%0A";
+    let message = "Hola DUKICKS, he preparado un pedido en la web. Aquí están los detalles para cotizar:%0A%0A";
+    
     cartItems.forEach(item => {
       // El precio del item ya es el precio final con descuento, si aplica
-      message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price.toFixed(2)}%0A`; 
+      message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price.toFixed(2)} c/u%0A`; 
     });
-    message += `%0A*Total: $${total.toFixed(2)}*`;
+    
+    // Se añade el desglose del resumen
+    message += `%0A*Resumen de la Cotización:*%0A`;
+    message += `Subtotal: $${subtotal.toFixed(2)}%0A`;
+    message += `Envío estimado: $${shipping.toFixed(2)}%0A`;
+    message += `*Total estimado: $${total.toFixed(2)}*%0A%0A`;
+    message += `Por favor, ayúdame a completar mi pedido.`;
 
     // Reemplaza el número con el real de la tienda
     const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
@@ -59,11 +66,11 @@ const CartPage = () => {
                     <p className="text-gray-500 text-sm mb-2">Talla: {item.size}</p>
                     {/* Bloque de Precio con Descuento */}
                     <div className="flex items-center space-x-2">
-                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
+                        {item.discount > 0 && ( 
                             <span className="text-gray-500 text-base line-through">${item.regularPrice.toFixed(2)}</span>
                         )}
                         <div className="text-dukicks-blue font-bold text-xl">${item.price.toFixed(2)}</div>
-                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
+                        {item.discount > 0 && ( 
                             <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded-full">{item.discount}% OFF</span>
                         )}
                     </div>

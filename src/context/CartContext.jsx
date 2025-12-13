@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
+import { getPriceDetails } from '../utils/productUtils';
 
 const CartContext = createContext();
 
@@ -22,7 +22,7 @@ export const CartProvider = ({ children }) => {
   // Añadir producto
   const addToCart = (product, quantity, size) => {
     // Calculamos los detalles del precio al añadir al carrito
-    const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+    const priceDetails = getPriceDetails(product.price, product.discount);
 
     setCartItems(prevItems => {
       // Verificar si el producto con esa ID y esa TALLA ya existe

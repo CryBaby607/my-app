@@ -340,7 +340,6 @@ const AdminLayout = () => {
                       <p className="text-sm text-gray-500 capitalize">{key}</p>
                       <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>
-                    {/* CORRECCIÓN: Usando el mapa de colores para aplicar clases estáticas */}
                     <div className={`p-3 rounded-full ${colorMap[stat.color].bg}`}> 
                       <i className={`${stat.icon} ${colorMap[stat.color].text}`}></i> 
                     </div>

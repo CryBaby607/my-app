@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { collection, getDocs, limit, query, orderBy } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
-import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
+import { getPriceDetails } from '../utils/productUtils';
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
@@ -16,11 +16,8 @@ const FeaturedProducts = () => {
         const productsRef = collection(db, "products");
         
         // 2. Query: Traer hasta 4 productos
-        // Intentamos ordenar por fecha de creación si existe, si no, traerá cualquiera
-        // Si te da error de índices en la consola, quita el 'orderBy' temporalmente
         const q = query(
           productsRef, 
-          // orderBy("createdAt", "desc"), // Descomenta esto si ya tienes el campo createdAt en todos
           limit(4)
         );
 
@@ -29,7 +26,7 @@ const FeaturedProducts = () => {
         
         // 4. Formatear datos
         const productsData = querySnapshot.docs.map(doc => ({
-          id: doc.id, // Ahora el ID es el string de Firebase (ej: "8s7d6f8s7d6f")
+          id: doc.id,
           ...doc.data()
         }));
 
@@ -56,7 +53,6 @@ const FeaturedProducts = () => {
             </h2>
             <p className="text-gray-600 mt-2">Los favoritos de nuestra comunidad</p>
           </div>
-          {/* Enlazamos a una búsqueda vacía para ver todo el catálogo */}
           <Link to="/search?q=" className="text-dukicks-blue font-semibold flex items-center hover:underline group">
             Ver todos
             <i className="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform"></i>
@@ -71,7 +67,7 @@ const FeaturedProducts = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {products.map((product) => {
-              const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+              const priceDetails = getPriceDetails(product.price, product.discount);
               
               return (
               <div
@@ -102,7 +98,6 @@ const FeaturedProducts = () => {
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="mb-2">
                     <Link to={`/product/${product.id}`} className="font-bold text-lg text-gray-900 hover:text-dukicks-blue transition-colors line-clamp-1">
-                      {/* NEW: Mostrar nombre concatenado */}
                       {`${product.brand || product.name} ${product.model || ''}`.trim()}
                     </Link>
                   </div>

@@ -24,13 +24,10 @@ const ProductPage = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        // 1. Referencia al documento específico por ID
         const docRef = doc(db, "products", id);
-        // 2. Obtener el documento
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          // 3. Guardar datos en el estado
           setProduct({ id: docSnap.id, ...docSnap.data() });
         } else {
           console.error("Producto no encontrado en Firebase");
@@ -46,14 +43,22 @@ const ProductPage = () => {
     fetchProduct();
   }, [id]);
 
+  const productNameDisplay = product 
+    ? `${product.brand || product.name || ''} ${product.model || ''}`.trim() 
+    : '';
+
   const handleAddToCart = () => {
     if (!selectedSize) {
       alert('Por favor selecciona una talla');
       return;
     }
     
-    // Pasamos el producto completo. CartContext calculará el precio final.
-    addToCart(product, quantity, selectedSize);
+    const productForCart = {
+      ...product,
+      name: productNameDisplay || 'Producto sin nombre'
+    };
+
+    addToCart(productForCart, quantity, selectedSize);
     
     setBtnText('¡Agregado!');
     setTimeout(() => {
@@ -67,14 +72,21 @@ const ProductPage = () => {
       return;
     }
 
-    const priceDetails = getPriceDetails(product.price, product.discount); // Usando product.discount
-    const finalPrice = priceDetails.finalPrice; // Precio final con descuento (o regular)
+    const priceDetails = getPriceDetails(product.price, product.discount);
+    const finalPrice = priceDetails.finalPrice;
     
-    const total = finalPrice * quantity;
+    const quantityVal = quantity;
+    const itemSubtotal = finalPrice * quantityVal;
     
-    const message = `Hola DUKICKS, me gustaría comprar este producto:%0A%0A` +
-      `- ${quantity}x ${product.name} (Talla: ${selectedSize}) - $${finalPrice.toFixed(2)}%0A%0A` +
-      `*Total a pagar: $${total.toFixed(2)}*`;
+    const shippingCost = 10.00;
+    const finalTotal = itemSubtotal + shippingCost;
+    
+    const message = `Hola DUKICKS, me gustaría cotizar la compra inmediata de este producto:%0A%0A` +
+      `- ${quantityVal}x ${productNameDisplay} (Talla: ${selectedSize}) - $${finalPrice.toFixed(2)} c/u%0A%0A` +
+      `Subtotal: $${itemSubtotal.toFixed(2)}%0A` +
+      `Envío estimado: $${shippingCost.toFixed(2)}%0A` +
+      `*Total estimado: $${finalTotal.toFixed(2)}*%0A%0A` +
+      `Por favor, confirma disponibilidad y el proceso de pago.`;
 
     const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
@@ -89,10 +101,7 @@ const ProductPage = () => {
     </div>
   );
 
-  const priceDetails = getPriceDetails(product.price, product.discount); // Usando product.discount
-  
-  // <-- CORRECCIÓN APLICADA AQUÍ: Se crea el nombre completo de forma robusta
-  const productNameDisplay = `${product.brand || product.name} ${product.model || ''}`.trim(); 
+  const priceDetails = getPriceDetails(product.price, product.discount);
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -107,7 +116,6 @@ const ProductPage = () => {
             {product.category}
           </Link>
           <span className="mx-2">/</span>
-          {/* CORRECCIÓN: Usando productNameDisplay para el breadcrumb */}
           <span className="text-gray-900 font-medium">{productNameDisplay}</span>
         </div>
 
@@ -117,7 +125,7 @@ const ProductPage = () => {
             <div className="rounded-3xl overflow-hidden shadow-lg border border-gray-100 bg-gray-50 aspect-w-1 aspect-h-1">
               <img 
                 src={product.image} 
-                alt={product.name} 
+                alt={productNameDisplay} 
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
@@ -129,10 +137,8 @@ const ProductPage = () => {
               <p className="text-dukicks-blue font-semibold tracking-wide uppercase text-sm mb-2">
                 {product.category}
               </p>
-              {/* CORRECCIÓN: Usando productNameDisplay para el título principal */}
               <h1 className="text-4xl font-bold text-gray-900 mb-4">{productNameDisplay}</h1>
               
-              {/* Bloque de Precio con Descuento */}
               <div className="flex items-center space-x-3">
                 {priceDetails.isDiscounted && (
                   <p className="text-2xl text-gray-400 line-through">

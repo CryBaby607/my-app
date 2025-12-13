@@ -33,12 +33,11 @@ const Footer = () => {
                 {socialLinks.map((social, index) => (
                   <a
                     key={index}
-                    href={social.url} // Usamos la nueva URL
-                    target="_blank" // Abrir en una nueva pestaña
-                    rel="noopener noreferrer" // Mejores prácticas de seguridad
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center ${social.color} transition-colors`}
                     title={social.title}
-                    // Eliminamos el onClick que prevenía la navegación
                   >
                     <i className={social.icon}></i>
                   </a>

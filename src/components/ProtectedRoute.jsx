@@ -17,7 +17,6 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // 2. (Opcional) Debe tener rol de 'admin' o 'editor' para entrar
-  // Si no tiene rol (ej: un cliente normal que se logueó), lo sacamos
   if (userRole !== 'admin' && userRole !== 'editor') {
     alert("No tienes permisos para acceder a esta área.");
     return <Navigate to="/" replace />;

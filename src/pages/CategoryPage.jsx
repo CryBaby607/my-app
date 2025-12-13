@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { db } from '../firebase/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { getPriceDetails } from '../utils/productUtils'; // <-- NUEVO
+import { getPriceDetails } from '../utils/productUtils';
 
 const CategoryPage = ({ categoryKey }) => {
   const [items, setItems] = useState([]);
@@ -19,7 +19,6 @@ const CategoryPage = ({ categoryKey }) => {
 
       try {
         // 1. Mapeo de URL a nombre exacto en Firebase
-        // IMPORTANTE: Estos deben coincidir con lo que guardaste en el Admin (NewProduct.jsx)
         const categoryMap = {
           'hombres': 'Hombres',
           'mujeres': 'Mujer',
@@ -49,7 +48,7 @@ const CategoryPage = ({ categoryKey }) => {
             return priceA - priceB;
           });
         } else if (sortOption === 'price-desc') {
-           fetchedItems.sort((a, b) => {
+            fetchedItems.sort((a, b) => {
             // Se calcula el precio final para ordenar correctamente
             const priceA = getPriceDetails(a.price, a.discount).finalPrice; // <-- CORREGIDO: Usando a.discount
             const priceB = getPriceDetails(b.price, b.discount).finalPrice; // <-- CORREGIDO: Usando b.discount
@@ -70,7 +69,7 @@ const CategoryPage = ({ categoryKey }) => {
 
     fetchCategoryProducts();
     
-  }, [categoryKey, sortOption]); // Recargar si cambia la categoría o el orden
+  }, [categoryKey, sortOption]);
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">

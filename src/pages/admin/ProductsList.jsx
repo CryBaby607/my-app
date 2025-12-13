@@ -47,7 +47,7 @@ const ProductsList = () => {
   // Función para obtener el precio a mostrar en la tabla (incluye descuento si aplica)
   const getDisplayPrice = (product) => {
     const price = Number(product.price);
-    const discount = Number(product.discount) || 0; // <-- CORREGIDO: Usando 'discount'
+    const discount = Number(product.discount) || 0;
     
     if (discount > 0) {
       const finalPrice = price * (1 - (discount / 100));
@@ -95,7 +95,6 @@ const ProductsList = () => {
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                     </div>
                     <div className="ml-4">
-                      {/* NEW: Mostrar nombre concatenado */}
                       <div className="font-medium text-gray-900">{`${product.brand || product.name} ${product.model || ''}`.trim()}</div>
                       <div className="text-gray-500 text-xs truncate max-w-xs">{product.description}</div>
                     </div>
@@ -111,7 +110,7 @@ const ProductsList = () => {
                 </td>
                 <td className="px-6 py-4 text-center">
                   <div className="flex justify-center space-x-3">
-                    {/* Botón Editar - CORREGIDO */}
+                    {/* Botón Editar */}
                     <Link 
                       to={`/admin/products/edit/${product.id}`} 
                       className="text-blue-600 hover:text-blue-900" 
