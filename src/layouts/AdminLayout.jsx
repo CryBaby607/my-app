@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { auth } from '../firebase/config'; 
+import { auth, db } from '../firebase/config'; // <-- 1. AGREGADO 'db'
 import { signOut } from 'firebase/auth';
+// <-- 2. AGREGADO IMPORTS DE FIRESTORE
+import { collection, query, where, onSnapshot, orderBy, limit } from 'firebase/firestore';
+
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -16,15 +19,57 @@ const AdminLayout = () => {
     role: 'Administrador',
     avatar: 'https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff'
   });
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: 'Nueva orden recibida', time: '5 min', read: false },
-    { id: 2, message: 'Producto agotado', time: '1 hora', read: false },
-    { id: 3, message: 'Comentario nuevo', time: '2 horas', read: true }
-  ]);
+  
+  // 3. CAMBIAR NOTIFICACIONES A ESTADO DINÁMICO
+  const [notifications, setNotifications] = useState([]); // Ahora es dinámico
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // 2. Efecto para manejar el redimensionamiento de ventana
+  // 4. EFECTO PARA CARGAR NOTIFICACIONES EN TIEMPO REAL
+  useEffect(() => {
+    // Aseguramos que db esté disponible antes de intentar la conexión
+    if (!db) return; 
+
+    // Escuchamos solo las órdenes que están en estado "Cotización Pendiente"
+    const q = query(
+      collection(db, "whatsappOrders"),
+      where("status", "==", "Cotización Pendiente"),
+      orderBy("timestamp", "desc"),
+      limit(10) // Limitamos a 10 las notificaciones visibles
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newNotifications = snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Calculamos hace cuánto tiempo fue
+        const minutesAgo = Math.floor((Date.now() - data.timestamp) / 60000);
+        let timeText;
+        if (minutesAgo < 1) {
+            timeText = 'Justo ahora';
+        } else if (minutesAgo < 60) {
+            timeText = `${minutesAgo} min`;
+        } else {
+            timeText = `${Math.floor(minutesAgo/60)} horas`;
+        }
+
+        return {
+          id: doc.id,
+          message: `Nueva cotización: $${data.total.toFixed(2)}`,
+          time: timeText,
+          read: false, // Siempre son "no leídas" en este contexto
+          link: '/admin/orders'
+        };
+      });
+      setNotifications(newNotifications);
+    }, (error) => {
+        console.error("Error fetching notifications:", error);
+    });
+
+    return () => unsubscribe();
+  }, []); // Dependencia vacía para que se ejecute solo al montar
+
+
+  // 2. Efecto para manejar el redimensionamiento de ventana (DEJAR IGUAL)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -48,7 +93,7 @@ const AdminLayout = () => {
     { path: '/admin/settings', icon: 'fas fa-cog', label: 'Configuración' }
   ];
 
-  // Mapeo para corregir clases dinámicas de Tailwind (Clases estáticas completas)
+  // Mapeo para corregir clases dinámicas de Tailwind (DEJAR IGUAL)
   const colorMap = {
       blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
       green: { bg: 'bg-green-100', text: 'text-green-600' },
@@ -63,30 +108,20 @@ const AdminLayout = () => {
     products: { value: '189', change: '+3%', icon: 'fas fa-box', color: 'yellow' }
   };
 
-  // <-- CORRECCIÓN DE SEGURIDAD: Cierre de sesión completo en Firebase
   const handleLogout = async () => {
     try {
-      // 1. Cerrar sesión en los servidores de Firebase
       await signOut(auth); 
     } catch (error) {
       console.error("Error al cerrar sesión en Firebase:", error);
-      // Continuar con la limpieza local en caso de error de conexión
     } finally {
-      // 2. Limpiar datos locales
       localStorage.removeItem('adminToken');
       localStorage.removeItem('adminEmail');
-      // 3. Redirigir
       navigate('/admin/login');
     }
   };
-
-  const markNotificationAsRead = (id) => {
-    setNotifications(notifications.map(notif => 
-      notif.id === id ? { ...notif, read: true } : notif
-    ));
-  };
-
-  const unreadNotifications = notifications.filter(n => !n.read).length;
+  
+  // El contador ahora es la longitud del array de notificaciones pendientes
+  const unreadNotifications = notifications.length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -227,44 +262,44 @@ const AdminLayout = () => {
                   <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-50">
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-gray-900">Notificaciones</h3>
-                        <button className="text-sm text-dukicks-blue hover:underline">
-                          Marcar todas como leídas
-                        </button>
+                        <h3 className="font-bold text-gray-900">Notificaciones Pendientes</h3>
                       </div>
                       <div className="space-y-3 max-h-96 overflow-y-auto">
-                        {notifications.map((notification) => (
-                          <div
-                            key={notification.id}
-                            className={`p-3 rounded-lg border ${
-                              notification.read
-                                ? 'border-gray-100 bg-gray-50'
-                                : 'border-blue-100 bg-blue-50'
-                            }`}
-                            onClick={() => markNotificationAsRead(notification.id)}
-                          >
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="font-medium text-gray-900">
-                                  {notification.message}
-                                </p>
-                                <p className="text-sm text-gray-500 mt-1">
-                                  <i className="far fa-clock mr-1"></i>
-                                  {notification.time}
-                                </p>
-                              </div>
-                              {!notification.read && (
-                                <div className="w-2 h-2 bg-dukicks-blue rounded-full"></div>
-                              )}
+                        {notifications.length > 0 ? (
+                            notifications.map((notification) => (
+                              <Link
+                                key={notification.id}
+                                to={notification.link}
+                                onClick={() => setShowNotifications(false)} // Cerrar al navegar
+                                className="block p-3 rounded-lg border border-blue-100 bg-blue-50 hover:bg-blue-100 transition-colors"
+                              >
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <p className="font-medium text-gray-900">
+                                      {notification.message}
+                                    </p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                      <i className="far fa-clock mr-1"></i>
+                                      {notification.time}
+                                    </p>
+                                  </div>
+                                  {/* Indicador de Nuevo */}
+                                  <div className="w-2 h-2 bg-dukicks-blue rounded-full flex-shrink-0 mt-1"></div>
+                                </div>
+                              </Link>
+                            ))
+                        ) : (
+                            <div className="text-center py-4 text-gray-500">
+                                <i className="fas fa-check-circle mr-1"></i> No hay notificaciones nuevas.
                             </div>
-                          </div>
-                        ))}
+                        )}
                       </div>
                       <Link
-                        to="/admin/notifications"
+                        to="/admin/orders"
+                        onClick={() => setShowNotifications(false)}
                         className="block mt-4 text-center text-dukicks-blue hover:underline text-sm"
                       >
-                        Ver todas las notificaciones
+                        Ver todos los pedidos
                       </Link>
                     </div>
                   </div>
@@ -340,6 +375,7 @@ const AdminLayout = () => {
                       <p className="text-sm text-gray-500 capitalize">{key}</p>
                       <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>
+                    {/* CORRECCIÓN: Usando el mapa de colores para aplicar clases estáticas */}
                     <div className={`p-3 rounded-full ${colorMap[stat.color].bg}`}> 
                       <i className={`${stat.icon} ${colorMap[stat.color].text}`}></i> 
                     </div>

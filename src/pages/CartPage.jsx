@@ -10,7 +10,7 @@ const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? 10.00 : 0; // Envío solo si hay productos
+  const shipping = subtotal > 0 ? 10.00 : 0;
   const total = subtotal + shipping;
 
   // Función para generar el link de WhatsApp con el pedido
@@ -35,12 +35,10 @@ const CartPage = () => {
         shipping: shipping,
         total: total,
         timestamp: Date.now(),
-        status: 'Cotización Pendiente', // Estado inicial
+        status: 'Cotización Pendiente',
         checkoutMethod: 'WhatsApp (Carrito)'
     };
     
-    // ------------------------------------------
-
     let message = "Hola DUKICKS, he preparado un pedido en la web. Aquí están los detalles para cotizar:%0A%0A";
     
     orderItemsData.forEach(item => {
@@ -56,7 +54,7 @@ const CartPage = () => {
     message += `Por favor, ayúdame a completar mi pedido.`;
 
     try {
-        await addDoc(collection(db, "whatsappOrders"), orderData); // Guardamos la cotización
+        await addDoc(collection(db, "whatsappOrders"), orderData);
         
         // Reemplaza el número con el real de la tienda
         const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;

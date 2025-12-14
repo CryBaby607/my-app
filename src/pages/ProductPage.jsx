@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { db } from '../firebase/config';
-import { doc, getDoc, collection, addDoc } from 'firebase/firestore'; // AGREGADO collection y addDoc
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getPriceDetails } from '../utils/productUtils';
 
@@ -56,13 +56,11 @@ const ProductPage = () => {
       return;
     }
     
-    // CORRECCIÓN: Creamos un objeto con el nombre compuesto asegurado para el carrito
     const productForCart = {
       ...product,
       name: productNameDisplay || product.name || 'Producto sin nombre'
     };
 
-    // Pasamos el producto corregido al contexto
     addToCart(productForCart, quantity, selectedSize);
     
     setBtnText('¡Agregado!');
@@ -71,7 +69,7 @@ const ProductPage = () => {
     }, 2000);
   };
 
-  const handleBuyNow = async () => { // HECHO ASYNC
+  const handleBuyNow = async () => {
     if (!selectedSize) {
       alert('Por favor selecciona una talla para continuar');
       return;
@@ -102,10 +100,9 @@ const ProductPage = () => {
         shipping: shippingCost,
         total: finalTotal,
         timestamp: Date.now(),
-        status: 'Cotización Pendiente', // Estado inicial
+        status: 'Cotización Pendiente',
         checkoutMethod: 'WhatsApp (Directo)'
     };
-    // ------------------------------------------
 
     const message = `Hola DUKICKS, me gustaría cotizar la compra inmediata de este producto:%0A%0A` +
       `- ${quantityVal}x ${productNameDisplay} (Talla: ${selectedSize}) - $${finalPrice.toFixed(2)} c/u%0A%0A` +
@@ -115,7 +112,7 @@ const ProductPage = () => {
       `Por favor, confirma disponibilidad y el proceso de pago.`;
 
     try {
-        await addDoc(collection(db, "whatsappOrders"), orderData); // Guardamos la cotización
+        await addDoc(collection(db, "whatsappOrders"), orderData);
         
         const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
         window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
@@ -134,7 +131,7 @@ const ProductPage = () => {
     </div>
   );
 
-  const priceDetails = getPriceDetails(product.price, product.discount); // Usando product.discount
+  const priceDetails = getPriceDetails(product.price, product.discount);
   
 
   return (
