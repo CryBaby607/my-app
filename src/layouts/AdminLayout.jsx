@@ -3,13 +3,13 @@ import { Link, Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db } from '../firebase/config'; 
 import { signOut } from 'firebase/auth';
-import { collection, query, where, onSnapshot, orderBy, limit, getDocs } from 'firebase/firestore'; // AGREGADO getDocs
+import { collection, query, where, onSnapshot, orderBy, limit, getDocs } from 'firebase/firestore'; 
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   
-  const [user, setUser] = useState({
+  const [user] = useState({
     name: 'Admin',
     email: localStorage.getItem('adminEmail') || 'admin@dukicks.com',
     role: 'Administrador',
@@ -20,15 +20,13 @@ const AdminLayout = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // ESTADO PARA LA BARRA DE ESTADÍSTICAS REALES (REEMPLAZA A 'stats')
   const [realStats, setRealStats] = useState({
-    orders: { value: '0', change: 'Total', icon: 'fas fa-shopping-cart', color: 'blue' },
-    revenue: { value: '$0.00', change: 'Ventas', icon: 'fas fa-dollar-sign', color: 'green' },
-    customers: { value: '0', change: 'Activos', icon: 'fas fa-users', color: 'purple' },
+    orders: { value: '0', change: 'Total Cotiz.', icon: 'fas fa-shopping-cart', color: 'blue' },
+    revenue: { value: '$0.00', change: 'Ventas Reales', icon: 'fas fa-dollar-sign', color: 'green' },
+    customers: { value: '0', change: 'Cotizaciones', icon: 'fas fa-users', color: 'purple' },
     products: { value: '0', change: 'Catálogo', icon: 'fas fa-box', color: 'yellow' }
   });
 
-  // 1. EFECTO: Notificaciones (Pendientes)
   useEffect(() => {
     if (!db) return; 
     const q = query(
@@ -55,42 +53,35 @@ const AdminLayout = () => {
     return () => unsubscribe();
   }, []); 
 
-  // 2. NUEVO EFECTO: Calcular Estadísticas Reales (Ingresos solo de Completados)
   useEffect(() => {
     const fetchStats = async () => {
         try {
-            // A. Contar Productos (Se hace una vez)
             const productsSnap = await getDocs(collection(db, "products"));
             const totalProducts = productsSnap.size;
 
-            // B. Listener para Órdenes (Tiempo real)
             const unsubscribeOrders = onSnapshot(collection(db, "whatsappOrders"), (snapshot) => {
                 let totalOrders = 0;
                 let totalRevenue = 0;
-                const uniqueCustomers = new Set(); 
+                const uniqueOrdersCount = snapshot.size;
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     totalOrders++;
                     
-                    // LÓGICA CLAVE: Solo sumar si está 'Completado'
                     if (data.status === 'Completado') {
                         totalRevenue += (data.total || 0);
                     }
-                    
-                    // Usaremos el ID de la orden como proxy para un cliente único por ahora
-                    uniqueCustomers.add(doc.id); 
                 });
 
                 setRealStats(prev => ({
                     orders: { ...prev.orders, value: String(totalOrders), change: 'Total Cotiz.' },
                     revenue: { ...prev.revenue, value: `$${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, change: 'Ventas Reales' },
-                    customers: { ...prev.customers, value: String(uniqueCustomers.size), change: 'Cotizaciones' },
+                    customers: { ...prev.customers, value: String(uniqueOrdersCount), change: 'Cotizaciones' },
                     products: { ...prev.products, value: String(totalProducts), change: 'Catálogo' }
                 }));
             });
 
-            return () => unsubscribeOrders(); // Limpieza del listener
+            return () => unsubscribeOrders();
         } catch (error) {
             console.error("Error cargando estadísticas:", error);
         }
@@ -98,7 +89,6 @@ const AdminLayout = () => {
     fetchStats();
   }, []);
 
-  // Manejo de resize
   useEffect(() => {
     const handleResize = () => {
       setSidebarOpen(window.innerWidth >= 1024);
@@ -107,15 +97,10 @@ const AdminLayout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // MENÚ DE NAVEGACIÓN LIMPIO (Solo lo funcional)
   const navItems = [
     { path: '/admin/dashboard', icon: 'fas fa-tachometer-alt', label: 'Dashboard', exact: true },
     { path: '/admin/products', icon: 'fas fa-shopping-bag', label: 'Productos' },
     { path: '/admin/orders', icon: 'fas fa-shopping-cart', label: 'Pedidos' },
-    // { path: '/admin/customers', icon: 'fas fa-users', label: 'Clientes' }, // DESACTIVADO
-    // { path: '/admin/categories', icon: 'fas fa-tags', label: 'Categorías' }, // DESACTIVADO
-    // { path: '/admin/inventory', icon: 'fas fa-boxes', label: 'Inventario' }, // DESACTIVADO
-    // { path: '/admin/settings', icon: 'fas fa-cog', label: 'Configuración' } // DESACTIVADO
   ];
 
   const colorMap = {
@@ -141,7 +126,6 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sidebar Mobile Overlay */}
       <AnimatePresence>
         {sidebarOpen && window.innerWidth < 1024 && (
           <motion.div
@@ -154,7 +138,6 @@ const AdminLayout = () => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
       <motion.aside
         initial={false}
         animate={{ x: sidebarOpen ? 0 : -300 }}
@@ -162,7 +145,6 @@ const AdminLayout = () => {
         className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-gray-900 to-black shadow-xl"
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
           <div className="p-6 border-b border-gray-800">
             <Link to="/admin/dashboard" className="flex items-center space-x-3">
               <div>
@@ -213,7 +195,6 @@ const AdminLayout = () => {
         </div>
       </motion.aside>
 
-      {/* Main Content */}
       <div className="lg:pl-64 transition-all duration-300">
         <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
           <div className="flex items-center justify-between px-6 py-4">
@@ -226,7 +207,17 @@ const AdminLayout = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Notifications */}
+              <div className="hidden md:block relative">
+                <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2">
+                  <i className="fas fa-search text-gray-400 mr-2"></i>
+                  <input
+                    type="text"
+                    placeholder="Buscar..."
+                    className="bg-transparent outline-none text-gray-700 placeholder-gray-500 w-48"
+                  />
+                </div>
+              </div>
+
               <div className="relative">
                 <button
                   onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
@@ -274,7 +265,6 @@ const AdminLayout = () => {
                 )}
               </div>
 
-              {/* User Menu */}
               <div className="relative">
                 <button onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
                   <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
@@ -289,15 +279,10 @@ const AdminLayout = () => {
                         <p className="text-sm text-gray-500">{user.email}</p>
                       </div>
                       <div className="space-y-2">
-                        {/* Secciones de Perfil y Configuración del usuario (no de la app) */}
                         <Link to="/admin/profile" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 text-gray-700">
                             <i className="fas fa-user w-5"></i>
                             <span>Mi Perfil</span>
                         </Link>
-                        {/* <Link to="/admin/settings" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 text-gray-700">
-                            <i className="fas fa-cog w-5"></i>
-                            <span>Configuración</span>
-                        </Link> */}
                         <div className="border-t pt-2">
                           <button onClick={handleLogout} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 text-red-600 w-full">
                             <i className="fas fa-sign-out-alt w-5"></i>
@@ -319,7 +304,6 @@ const AdminLayout = () => {
                 <div key={key} className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      {/* Etiquetas mejoradas para la presentación */}
                       <p className="text-sm text-gray-500 capitalize">{key === 'revenue' ? 'Ingresos (Completados)' : key === 'orders' ? 'Cotizaciones Totales' : key === 'customers' ? 'Clientes Únicos' : 'Productos'}</p>
                       <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>

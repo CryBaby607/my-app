@@ -8,7 +8,6 @@ const ProductsList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Función para cargar productos
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -29,12 +28,10 @@ const ProductsList = () => {
     fetchProducts();
   }, []);
 
-  // Función para eliminar
   const handleDelete = async (id, name) => {
     if (window.confirm(`¿Estás seguro de eliminar "${name}"? Esta acción no se puede deshacer.`)) {
       try {
         await deleteDoc(doc(db, "products", id));
-        // Actualizamos la lista localmente filtrando el eliminado
         setProducts(products.filter(product => product.id !== id));
         alert("Producto eliminado correctamente");
       } catch (error) {
@@ -44,7 +41,6 @@ const ProductsList = () => {
     }
   };
   
-  // Función para obtener el precio a mostrar en la tabla (incluye descuento si aplica)
   const getDisplayPrice = (product) => {
     const price = Number(product.price);
     const discount = Number(product.discount) || 0;
@@ -110,7 +106,6 @@ const ProductsList = () => {
                 </td>
                 <td className="px-6 py-4 text-center">
                   <div className="flex justify-center space-x-3">
-                    {/* Botón Editar */}
                     <Link 
                       to={`/admin/products/edit/${product.id}`} 
                       className="text-blue-600 hover:text-blue-900" 
@@ -119,7 +114,6 @@ const ProductsList = () => {
                       <i className="fas fa-edit"></i>
                     </Link>
                     
-                    {/* Botón Eliminar */}
                     <button 
                       onClick={() => handleDelete(product.id, product.name)}
                       className="text-red-600 hover:text-red-900" 

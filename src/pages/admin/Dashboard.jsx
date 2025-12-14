@@ -38,7 +38,6 @@ const colorMap = {
 };
 
 const Dashboard = () => {
-    // Inicializar stats con valores que reflejen carga/cero
     const [stats, setStats] = useState({ 
         orders: { value: '0', change: '0%', icon: 'fas fa-shopping-cart', color: 'blue' },
         revenue: { value: '$0.00', change: '0%', icon: 'fas fa-dollar-sign', color: 'green' },
@@ -56,78 +55,87 @@ const Dashboard = () => {
             // 1. Obtener Productos (Catálogo)
             const productsSnapshot = await getDocs(collection(db, "products"));
             const productsCount = productsSnapshot.size;
-
+            
             // 2. Obtener Órdenes/Cotizaciones
             const ordersSnapshot = await getDocs(query(collection(db, "whatsappOrders"), orderBy("timestamp", "desc"), limit(100)));
             const allOrders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // 3. Calcular Estadísticas y Gráficos
-            let totalRevenue = 0;
-            let totalCompletedOrders = 0;
-            const monthlySales = {};
+            // 3. Procesar Datos
             
+            // Estadísticas y Revenue (solo órdenes Completadas)
             const completedOrders = allOrders.filter(order => order.status === 'Completado');
+            const revenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
+            const totalCompletedOrdersCount = completedOrders.length;
             
-            totalCompletedOrders = completedOrders.length;
-            totalRevenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
-
-            // Calcular ventas mensuales (simplificado por ahora)
+            // Datos para Gráfico de Ventas (Revenue)
+            const monthlyRevenue = {};
             completedOrders.forEach(order => {
                 const date = new Date(order.timestamp);
-                const month = date.toLocaleString('es-ES', { month: 'short', year: 'numeric' });
-                monthlySales[month] = (monthlySales[month] || 0) + order.total;
+                const monthYear = date.toLocaleString('es-ES', { month: 'short', year: 'numeric' });
+                monthlyRevenue[monthYear] = (monthlyRevenue[monthYear] || 0) + order.total;
             });
             
-            // Preparar datos para el gráfico de barras
-            const salesLabels = Object.keys(monthlySales);
-            const salesDataValues = Object.values(monthlySales);
+            const salesLabels = Object.keys(monthlyRevenue);
+            const salesDataValues = Object.values(monthlyRevenue);
 
-            // Preparar datos para Pedidos Recientes (últimos 5)
-            const sortedOrders = [...allOrders].sort((a, b) => b.timestamp - a.timestamp);
-            setRecentOrders(sortedOrders.slice(0, 5));
-
-            // Preparar datos para Gráfico de Categorías (Placeholder)
+            // Gráfico de Categorías
             const categoryBreakdown = {};
-            productsSnapshot.docs.forEach(doc => {
-                const category = doc.data().category || 'Sin Categoría';
-                categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1;
+            completedOrders.forEach(order => {
+                order.items.forEach(item => {
+                    const cat = item.category || 'Otros';
+                    categoryBreakdown[cat] = (categoryBreakdown[cat] || 0) + item.quantity;
+                });
             });
+
             const categoryLabels = Object.keys(categoryBreakdown);
             const categoryDataValues = Object.values(categoryBreakdown);
 
-
-            setStats({ 
-                totalProducts: productsCount, 
-                totalCompletedOrders,
-                totalRevenue
-            });
+            // Órdenes Recientes (las últimas 5)
+            const recent = allOrders.slice(0, 5);
+            
+            // 4. Actualizar Estados
+            setStats(prev => ({
+                ...prev,
+                orders: { ...prev.orders, value: String(totalCompletedOrdersCount) },
+                revenue: { ...prev.revenue, value: `$${revenue.toFixed(2)}` },
+                products: { ...prev.products, value: String(productsCount) }
+            }));
             
             setSalesChartData({
                 labels: salesLabels,
-                datasets: [{
-                    label: 'Ventas (Cotizaciones Completadas)',
-                    data: salesDataValues,
-                    backgroundColor: 'rgba(59, 130, 246, 0.6)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 1,
-                }]
+                datasets: [
+                    {
+                        label: 'Ventas (Órdenes Completadas)',
+                        data: salesDataValues,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
             });
-            
+
             setCategoryChartData({
                 labels: categoryLabels,
                 datasets: [
                     {
                         data: categoryDataValues,
                         backgroundColor: [
-                            '#3b82f6', // blue
-                            '#ef4444', // red
-                            '#f59e0b', // yellow
-                            '#10b981', // green
-                            '#8b5cf6'  // purple
+                            '#2563eb',
+                            '#10b981',
+                            '#f59e0b',
+                            '#8b5cf6'
                         ]
                     }
                 ]
             });
+
+            setRecentOrders(recent.map(order => ({
+                id: order.id.substring(0, 8),
+                amount: `$${order.total.toFixed(2)}`,
+                status: order.status,
+                date: new Date(order.timestamp).toLocaleDateString()
+            })));
 
 
         } catch (error) {
@@ -139,27 +147,12 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchDashboardData();
-    }, []); 
+    }, []);
 
-    const barOptions = {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Ventas Mensuales' },
-        },
-    };
-    
-    // -----------------------------------------------------------
-    // ARREGLO CRÍTICO: Eliminación de acciones no implementadas
-    // -----------------------------------------------------------
-    const quickActions = [
-        { icon: 'fas fa-plus', label: 'Nuevo Producto', to: '/admin/products/new', color: 'blue' },
-        // Botón de Pedidos actualizado para reflejar cotizaciones
-        { icon: 'fas fa-shopping-cart', label: 'Ver Cotizaciones', to: '/admin/orders', color: 'green' },
-        // Botones de Reportes y Crear Ofertas ELIMINADOS
-    ];
-    // -----------------------------------------------------------
-
+  const quickActions = [
+    { icon: 'fas fa-plus', label: 'Nuevo Producto', to: '/admin/products/new', color: 'blue' },
+    { icon: 'fas fa-shopping-cart', label: 'Ver Cotizaciones', to: '/admin/orders', color: 'green' },
+  ];
 
   if (loading) return <div className="flex justify-center p-10"><LoadingSpinner size="lg" /></div>;
 
@@ -180,8 +173,7 @@ const Dashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Usamos grid-cols-2 ya que solo quedan 2 botones */}
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
         {quickActions.map((action, index) => (
           <Link
             key={index}
@@ -303,7 +295,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100">Total Cotizaciones Completadas</p>
-              <p className="text-3xl font-bold mt-2">{stats.totalCompletedOrders || 0}</p>
+              <p className="text-3xl font-bold mt-2">{stats.orders.value}</p>
             </div>
             <i className="fas fa-check-circle text-3xl opacity-50"></i>
           </div>
@@ -316,7 +308,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100">Revenue Estimado</p>
-              <p className="text-3xl font-bold mt-2">${stats.totalRevenue ? stats.totalRevenue.toFixed(2) : '0.00'}</p>
+              <p className="text-3xl font-bold mt-2">{stats.revenue.value}</p>
             </div>
             <i className="fas fa-dollar-sign text-3xl opacity-50"></i>
           </div>
@@ -329,7 +321,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-purple-100">Total Productos</p>
-              <p className="text-3xl font-bold mt-2">{stats.totalProducts || 0}</p>
+              <p className="text-3xl font-bold mt-2">{stats.products.value}</p>
             </div>
             <i className="fas fa-box text-3xl opacity-50"></i>
           </div>
