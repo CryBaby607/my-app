@@ -56,87 +56,78 @@ const Dashboard = () => {
             // 1. Obtener Productos (Catálogo)
             const productsSnapshot = await getDocs(collection(db, "products"));
             const productsCount = productsSnapshot.size;
-            
-            // 2. Obtener Órdenes/Cotizaciones (Solo los últimos 100 para estadísticas)
+
+            // 2. Obtener Órdenes/Cotizaciones
             const ordersSnapshot = await getDocs(query(collection(db, "whatsappOrders"), orderBy("timestamp", "desc"), limit(100)));
             const allOrders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // 3. Procesar Datos
+            // 3. Calcular Estadísticas y Gráficos
+            let totalRevenue = 0;
+            let totalCompletedOrders = 0;
+            const monthlySales = {};
             
-            // a) Estadísticas de Órdenes y Revenue (solo órdenes Completadas)
             const completedOrders = allOrders.filter(order => order.status === 'Completado');
-            const revenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
-            const totalCompletedOrdersCount = completedOrders.length;
             
-            // b) Datos para Gráfico de Ventas (Revenue)
-            const monthlyRevenue = {};
+            totalCompletedOrders = completedOrders.length;
+            totalRevenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
+
+            // Calcular ventas mensuales (simplificado por ahora)
             completedOrders.forEach(order => {
                 const date = new Date(order.timestamp);
-                const monthYear = date.toLocaleString('es-ES', { month: 'short', year: 'numeric' });
-                monthlyRevenue[monthYear] = (monthlyRevenue[monthYear] || 0) + order.total;
+                const month = date.toLocaleString('es-ES', { month: 'short', year: 'numeric' });
+                monthlySales[month] = (monthlySales[month] || 0) + order.total;
             });
             
-            const salesLabels = Object.keys(monthlyRevenue);
-            const salesDataValues = Object.values(monthlyRevenue);
+            // Preparar datos para el gráfico de barras
+            const salesLabels = Object.keys(monthlySales);
+            const salesDataValues = Object.values(monthlySales);
 
-            // c) Gráfico de Categorías (se basa en ítems de las órdenes completadas)
+            // Preparar datos para Pedidos Recientes (últimos 5)
+            const sortedOrders = [...allOrders].sort((a, b) => b.timestamp - a.timestamp);
+            setRecentOrders(sortedOrders.slice(0, 5));
+
+            // Preparar datos para Gráfico de Categorías (Placeholder)
             const categoryBreakdown = {};
-            completedOrders.forEach(order => {
-                order.items.forEach(item => {
-                    const cat = item.category || 'Otros';
-                    categoryBreakdown[cat] = (categoryBreakdown[cat] || 0) + item.quantity;
-                });
+            productsSnapshot.docs.forEach(doc => {
+                const category = doc.data().category || 'Sin Categoría';
+                categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1;
             });
-
             const categoryLabels = Object.keys(categoryBreakdown);
             const categoryDataValues = Object.values(categoryBreakdown);
 
-            // d) Órdenes Recientes (las últimas 5, sin importar el estado)
-            const recent = allOrders.slice(0, 5);
-            
-            // 4. Actualizar Estados
-            setStats(prev => ({
-                ...prev,
-                orders: { ...prev.orders, value: String(totalCompletedOrdersCount) },
-                revenue: { ...prev.revenue, value: `$${revenue.toFixed(2)}` },
-                products: { ...prev.products, value: String(productsCount) }
-            }));
+
+            setStats({ 
+                totalProducts: productsCount, 
+                totalCompletedOrders,
+                totalRevenue
+            });
             
             setSalesChartData({
                 labels: salesLabels,
-                datasets: [
-                    {
-                        label: 'Ventas (Órdenes Completadas)',
-                        data: salesDataValues,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
+                datasets: [{
+                    label: 'Ventas (Cotizaciones Completadas)',
+                    data: salesDataValues,
+                    backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                }]
             });
-
+            
             setCategoryChartData({
                 labels: categoryLabels,
                 datasets: [
                     {
                         data: categoryDataValues,
                         backgroundColor: [
-                            '#2563eb',
-                            '#10b981',
-                            '#f59e0b',
-                            '#8b5cf6'
+                            '#3b82f6', // blue
+                            '#ef4444', // red
+                            '#f59e0b', // yellow
+                            '#10b981', // green
+                            '#8b5cf6'  // purple
                         ]
                     }
                 ]
             });
-
-            setRecentOrders(recent.map(order => ({
-                id: order.id.substring(0, 8),
-                amount: `$${order.total.toFixed(2)}`,
-                status: order.status,
-                date: new Date(order.timestamp).toLocaleDateString()
-            })));
 
 
         } catch (error) {
@@ -148,14 +139,27 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+    }, []); 
 
-  const quickActions = [
-    { icon: 'fas fa-plus', label: 'Nuevo Producto', to: '/admin/products/new', color: 'blue' },
-    { icon: 'fas fa-shopping-cart', label: 'Cotizaciones', to: '/admin/orders', color: 'green' },
-    { icon: 'fas fa-chart-bar', label: 'Reportes', to: '/admin/reports', color: 'purple' },
-    { icon: 'fas fa-bullhorn', label: 'Crear Oferta', to: '/admin/promotions/new', color: 'yellow' }
-  ];
+    const barOptions = {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Ventas Mensuales' },
+        },
+    };
+    
+    // -----------------------------------------------------------
+    // ARREGLO CRÍTICO: Eliminación de acciones no implementadas
+    // -----------------------------------------------------------
+    const quickActions = [
+        { icon: 'fas fa-plus', label: 'Nuevo Producto', to: '/admin/products/new', color: 'blue' },
+        // Botón de Pedidos actualizado para reflejar cotizaciones
+        { icon: 'fas fa-shopping-cart', label: 'Ver Cotizaciones', to: '/admin/orders', color: 'green' },
+        // Botones de Reportes y Crear Ofertas ELIMINADOS
+    ];
+    // -----------------------------------------------------------
+
 
   if (loading) return <div className="flex justify-center p-10"><LoadingSpinner size="lg" /></div>;
 
@@ -177,6 +181,7 @@ const Dashboard = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Usamos grid-cols-2 ya que solo quedan 2 botones */}
         {quickActions.map((action, index) => (
           <Link
             key={index}
@@ -298,7 +303,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100">Total Cotizaciones Completadas</p>
-              <p className="text-3xl font-bold mt-2">{stats.orders.value}</p>
+              <p className="text-3xl font-bold mt-2">{stats.totalCompletedOrders || 0}</p>
             </div>
             <i className="fas fa-check-circle text-3xl opacity-50"></i>
           </div>
@@ -311,7 +316,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100">Revenue Estimado</p>
-              <p className="text-3xl font-bold mt-2">{stats.revenue.value}</p>
+              <p className="text-3xl font-bold mt-2">${stats.totalRevenue ? stats.totalRevenue.toFixed(2) : '0.00'}</p>
             </div>
             <i className="fas fa-dollar-sign text-3xl opacity-50"></i>
           </div>
@@ -324,7 +329,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-purple-100">Total Productos</p>
-              <p className="text-3xl font-bold mt-2">{stats.products.value}</p>
+              <p className="text-3xl font-bold mt-2">{stats.totalProducts || 0}</p>
             </div>
             <i className="fas fa-box text-3xl opacity-50"></i>
           </div>

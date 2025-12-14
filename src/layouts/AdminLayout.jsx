@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db } from '../firebase/config'; 
 import { signOut } from 'firebase/auth';
-import { collection, query, where, onSnapshot, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, limit, getDocs } from 'firebase/firestore'; // AGREGADO getDocs
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -20,15 +20,15 @@ const AdminLayout = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // ESTADO PARA LA BARRA DE ESTADÍSTICAS REALES
+  // ESTADO PARA LA BARRA DE ESTADÍSTICAS REALES (REEMPLAZA A 'stats')
   const [realStats, setRealStats] = useState({
-    orders: { value: '0', change: '', icon: 'fas fa-shopping-cart', color: 'blue' },
-    revenue: { value: '$0.00', change: '', icon: 'fas fa-dollar-sign', color: 'green' },
-    customers: { value: '0', change: '', icon: 'fas fa-users', color: 'purple' },
-    products: { value: '0', change: '', icon: 'fas fa-box', color: 'yellow' }
+    orders: { value: '0', change: 'Total', icon: 'fas fa-shopping-cart', color: 'blue' },
+    revenue: { value: '$0.00', change: 'Ventas', icon: 'fas fa-dollar-sign', color: 'green' },
+    customers: { value: '0', change: 'Activos', icon: 'fas fa-users', color: 'purple' },
+    products: { value: '0', change: 'Catálogo', icon: 'fas fa-box', color: 'yellow' }
   });
 
-  // 1. EFECTO: Notificaciones
+  // 1. EFECTO: Notificaciones (Pendientes)
   useEffect(() => {
     if (!db) return; 
     const q = query(
@@ -53,17 +53,17 @@ const AdminLayout = () => {
       setNotifications(newNotifications);
     }, (error) => console.error("Error notificaciones:", error));
     return () => unsubscribe();
-  }, []);
+  }, []); 
 
-  // 2. EFECTO: Calcular Estadísticas Reales (CORREGIDO)
+  // 2. NUEVO EFECTO: Calcular Estadísticas Reales (Ingresos solo de Completados)
   useEffect(() => {
     const fetchStats = async () => {
         try {
-            // A. Contar Productos
+            // A. Contar Productos (Se hace una vez)
             const productsSnap = await getDocs(collection(db, "products"));
             const totalProducts = productsSnap.size;
 
-            // B. Calcular Ventas y Clientes
+            // B. Listener para Órdenes (Tiempo real)
             const unsubscribeOrders = onSnapshot(collection(db, "whatsappOrders"), (snapshot) => {
                 let totalOrders = 0;
                 let totalRevenue = 0;
@@ -71,26 +71,26 @@ const AdminLayout = () => {
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    totalOrders++; // Contamos todas las interacciones como pedidos/cotizaciones
+                    totalOrders++;
                     
-                    // CORRECCIÓN: Solo sumar ingresos si el estado es 'Completado'
+                    // LÓGICA CLAVE: Solo sumar si está 'Completado'
                     if (data.status === 'Completado') {
                         totalRevenue += (data.total || 0);
                     }
                     
+                    // Usaremos el ID de la orden como proxy para un cliente único por ahora
                     uniqueCustomers.add(doc.id); 
                 });
 
                 setRealStats(prev => ({
-                    orders: { ...prev.orders, value: String(totalOrders), change: 'Total' },
-                    // Formateamos como moneda
-                    revenue: { ...prev.revenue, value: `$${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, change: 'Ventas' },
-                    customers: { ...prev.customers, value: String(uniqueCustomers.size), change: 'Activos' },
+                    orders: { ...prev.orders, value: String(totalOrders), change: 'Total Cotiz.' },
+                    revenue: { ...prev.revenue, value: `$${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, change: 'Ventas Reales' },
+                    customers: { ...prev.customers, value: String(uniqueCustomers.size), change: 'Cotizaciones' },
                     products: { ...prev.products, value: String(totalProducts), change: 'Catálogo' }
                 }));
             });
 
-            return () => unsubscribeOrders();
+            return () => unsubscribeOrders(); // Limpieza del listener
         } catch (error) {
             console.error("Error cargando estadísticas:", error);
         }
@@ -107,14 +107,15 @@ const AdminLayout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // MENÚ DE NAVEGACIÓN LIMPIO (Solo lo funcional)
   const navItems = [
     { path: '/admin/dashboard', icon: 'fas fa-tachometer-alt', label: 'Dashboard', exact: true },
     { path: '/admin/products', icon: 'fas fa-shopping-bag', label: 'Productos' },
     { path: '/admin/orders', icon: 'fas fa-shopping-cart', label: 'Pedidos' },
-    { path: '/admin/customers', icon: 'fas fa-users', label: 'Clientes' },
-    { path: '/admin/categories', icon: 'fas fa-tags', label: 'Categorías' },
-    { path: '/admin/inventory', icon: 'fas fa-boxes', label: 'Inventario' },
-    { path: '/admin/settings', icon: 'fas fa-cog', label: 'Configuración' }
+    // { path: '/admin/customers', icon: 'fas fa-users', label: 'Clientes' }, // DESACTIVADO
+    // { path: '/admin/categories', icon: 'fas fa-tags', label: 'Categorías' }, // DESACTIVADO
+    // { path: '/admin/inventory', icon: 'fas fa-boxes', label: 'Inventario' }, // DESACTIVADO
+    // { path: '/admin/settings', icon: 'fas fa-cog', label: 'Configuración' } // DESACTIVADO
   ];
 
   const colorMap = {
@@ -288,6 +289,15 @@ const AdminLayout = () => {
                         <p className="text-sm text-gray-500">{user.email}</p>
                       </div>
                       <div className="space-y-2">
+                        {/* Secciones de Perfil y Configuración del usuario (no de la app) */}
+                        <Link to="/admin/profile" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 text-gray-700">
+                            <i className="fas fa-user w-5"></i>
+                            <span>Mi Perfil</span>
+                        </Link>
+                        {/* <Link to="/admin/settings" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 text-gray-700">
+                            <i className="fas fa-cog w-5"></i>
+                            <span>Configuración</span>
+                        </Link> */}
                         <div className="border-t pt-2">
                           <button onClick={handleLogout} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 text-red-600 w-full">
                             <i className="fas fa-sign-out-alt w-5"></i>
@@ -309,7 +319,8 @@ const AdminLayout = () => {
                 <div key={key} className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-500 capitalize">{key === 'revenue' ? 'Ingresos (Completados)' : key === 'orders' ? 'Cotizaciones Totales' : key === 'customers' ? 'Clientes' : 'Productos'}</p>
+                      {/* Etiquetas mejoradas para la presentación */}
+                      <p className="text-sm text-gray-500 capitalize">{key === 'revenue' ? 'Ingresos (Completados)' : key === 'orders' ? 'Cotizaciones Totales' : key === 'customers' ? 'Clientes Únicos' : 'Productos'}</p>
                       <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     </div>
                     <div className={`p-3 rounded-full ${colorMap[stat.color].bg}`}> 
