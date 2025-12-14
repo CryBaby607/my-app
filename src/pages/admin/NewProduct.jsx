@@ -21,7 +21,6 @@ const NewProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // --- DEFINICIÓN DE TALLAS POR CATEGORÍA ---
   const categorySizes = {
     'Hombres': ['25', '25.5', '26', '26.5', '27', '27.5', '28', '28.5', '29', '29.5', '30', '30.5', '31'],
     'Mujer': ['22', '22.5', '23', '23.5', '24', '24.5', '25', '25.5', '26', '26.5', '27'],
@@ -29,11 +28,8 @@ const NewProduct = () => {
     'Gorras': ['Unitalla']
   };
 
-  // Obtener las tallas actuales basadas en la categoría seleccionada
   const currentSizes = categorySizes[formData.category] || [];
 
-  // Efecto: Si cambia la categoría, limpiamos las tallas seleccionadas para evitar incoherencias
-  // (Opcional: puedes quitar esto si prefieres mantenerlas)
   useEffect(() => {
     setFormData(prev => ({ ...prev, sizes: [] }));
   }, [formData.category]);
@@ -195,7 +191,6 @@ const NewProduct = () => {
           />
         </div>
 
-        {/* SECCIÓN DE TALLAS DINÁMICAS */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Tallas Disponibles ({formData.category})

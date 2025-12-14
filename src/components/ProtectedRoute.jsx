@@ -11,12 +11,10 @@ const ProtectedRoute = ({ children }) => {
     return <div className="h-screen flex items-center justify-center"><LoadingSpinner /></div>;
   }
 
-  // 1. Debe estar logueado
   if (!user) {
     return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
 
-  // 2. (Opcional) Debe tener rol de 'admin' o 'editor' para entrar
   if (userRole !== 'admin' && userRole !== 'editor') {
     alert("No tienes permisos para acceder a esta área.");
     return <Navigate to="/" replace />;

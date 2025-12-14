@@ -8,7 +8,6 @@ const OrdersList = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Escucha en tiempo real los pedidos de cotización
         const q = query(collection(db, "whatsappOrders"), orderBy("timestamp", "desc"));
         
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -26,7 +25,6 @@ const OrdersList = () => {
         return () => unsubscribe();
     }, []);
 
-    // Función para cambiar el estado de la orden
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
             const orderRef = doc(db, "whatsappOrders", orderId);
@@ -41,20 +39,18 @@ const OrdersList = () => {
         }
     };
     
-    // Helper para el color del estado
     const getStatusClasses = (status) => {
         switch (status) {
             case 'Completado':
                 return 'bg-green-100 text-green-800';
             case 'Cancelado':
                 return 'bg-red-100 text-red-800';
-            default: // Cotización Pendiente
+            default: 
                 return 'bg-yellow-100 text-yellow-800';
         }
     };
     
     const formatTimestamp = (timestamp) => {
-        // Usa toLocaleString si timestamp es un número (ms desde epoch)
         return new Date(timestamp).toLocaleString();
     };
 
@@ -79,8 +75,8 @@ const OrdersList = () => {
 
             {orders.length === 0 ? (
                 <div className="text-center py-10 bg-white rounded-xl shadow-lg border border-gray-200">
-                     <i className="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
-                     <p className="text-gray-500">Aún no hay cotizaciones registradas.</p>
+                    <i className="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                    <p className="text-gray-500">Aún no hay cotizaciones registradas.</p>
                 </div>
             ) : (
                 <div className="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">

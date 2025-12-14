@@ -17,7 +17,6 @@ const SearchResultsPage = () => {
     const fetchAndFilterProducts = async () => {
       setLoading(true);
       try {
-        // 1. Traemos los productos REALES de Firebase
         const productsRef = collection(db, "products");
         const snapshot = await getDocs(productsRef);
         
@@ -26,7 +25,6 @@ const SearchResultsPage = () => {
           ...doc.data()
         }));
 
-        // 2. Filtramos los resultados
         if (queryText) {
           const lowerQuery = queryText.toLowerCase();
           const results = allProducts.filter(product => {
@@ -52,7 +50,7 @@ const SearchResultsPage = () => {
     };
 
     fetchAndFilterProducts();
-  }, [queryText]); // Se ejecuta cada vez que cambia la búsqueda
+  }, [queryText]); 
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -101,7 +99,6 @@ const SearchResultsPage = () => {
                 <div className="p-5">
                   <p className="text-sm text-gray-500 mb-1">{product.category}</p>
                   <h3 className="font-bold text-gray-900 text-lg mb-2">
-                    {/* NEW: Mostrar nombre concatenado */}
                     {`${product.brand || product.name} ${product.model || ''}`.trim()}
                   </h3>
                   <div className="flex items-center space-x-2">

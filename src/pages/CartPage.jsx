@@ -13,14 +13,11 @@ const CartPage = () => {
   const shipping = subtotal > 0 ? 10.00 : 0;
   const total = subtotal + shipping;
 
-  // Función para generar el link de WhatsApp con el pedido
   const handleWhatsAppCheckout = async () => {
     if (cartItems.length === 0) return;
 
-    // --- LÓGICA PARA GUARDAR EN FIREBASE ---
     const orderItemsData = cartItems.map(item => ({
         id: item.id,
-        // Aseguramos el nombre completo del producto
         name: `${item.brand || item.name || ''} ${item.model || ''}`.trim(), 
         size: item.size,
         quantity: item.quantity,
@@ -42,11 +39,9 @@ const CartPage = () => {
     let message = "Hola DUKICKS, he preparado un pedido en la web. Aquí están los detalles para cotizar:%0A%0A";
     
     orderItemsData.forEach(item => {
-      // Usamos el nombre asegurado del array orderItemsData
       message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price.toFixed(2)} c/u%0A`; 
     });
     
-    // Se añade el desglose del resumen
     message += `%0A*Resumen de la Cotización:*%0A`;
     message += `Subtotal: $${subtotal.toFixed(2)}%0A`;
     message += `Envío estimado: $${shipping.toFixed(2)}%0A`;
@@ -56,7 +51,6 @@ const CartPage = () => {
     try {
         await addDoc(collection(db, "whatsappOrders"), orderData);
         
-        // Reemplaza el número con el real de la tienda
         const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
         window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
         
@@ -83,10 +77,8 @@ const CartPage = () => {
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Lista de Productos */}
             <div className="lg:w-2/3 space-y-4">
               {cartItems.map((item) => (
-                // Usamos item.id + item.size como key para diferenciar tallas
                 <div key={`${item.id}-${item.size}`} className="flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                   <img
                     src={item.image}
@@ -96,13 +88,12 @@ const CartPage = () => {
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-bold text-lg">{item.name}</h3>
                     <p className="text-gray-500 text-sm mb-2">Talla: {item.size}</p>
-                    {/* Bloque de Precio con Descuento */}
                     <div className="flex items-center space-x-2">
-                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
+                        {item.discount > 0 && ( 
                             <span className="text-gray-500 text-base line-through">${item.regularPrice.toFixed(2)}</span>
                         )}
                         <div className="text-dukicks-blue font-bold text-xl">${item.price.toFixed(2)}</div>
-                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
+                        {item.discount > 0 && ( 
                             <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded-full">{item.discount}% OFF</span>
                         )}
                     </div>
@@ -135,7 +126,6 @@ const CartPage = () => {
               ))}
             </div>
 
-            {/* Resumen de Compra */}
             <div className="lg:w-1/3">
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 sticky top-24">
                 <h3 className="text-xl font-bold mb-6">Resumen del Pedido</h3>

@@ -24,13 +24,10 @@ const ProductPage = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        // 1. Referencia al documento específico por ID
         const docRef = doc(db, "products", id);
-        // 2. Obtener el documento
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          // 3. Guardar datos en el estado
           setProduct({ id: docSnap.id, ...docSnap.data() });
         } else {
           console.error("Producto no encontrado en Firebase");
@@ -81,7 +78,6 @@ const ProductPage = () => {
     const quantityVal = quantity;
     const itemSubtotal = finalPrice * quantityVal;
     
-    // Aplicamos el costo de envío fijo para la cotización de compra directa
     const shippingCost = 10.00;
     const finalTotal = itemSubtotal + shippingCost;
     
@@ -139,7 +135,6 @@ const ProductPage = () => {
       <Header />
 
       <main className="flex-grow container mx-auto px-4 py-12">
-        {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-8">
           <Link to="/" className="hover:text-dukicks-blue">Inicio</Link> 
           <span className="mx-2">/</span>
@@ -147,12 +142,10 @@ const ProductPage = () => {
             {product.category}
           </Link>
           <span className="mx-2">/</span>
-          {/* CORRECCIÓN: Usando productNameDisplay para el breadcrumb */}
           <span className="text-gray-900 font-medium">{productNameDisplay}</span>
         </div>
 
         <div className="flex flex-col md:flex-row gap-12">
-          {/* Imagen */}
           <div className="md:w-1/2">
             <div className="rounded-3xl overflow-hidden shadow-lg border border-gray-100 bg-gray-50 aspect-w-1 aspect-h-1">
               <img 
@@ -163,16 +156,13 @@ const ProductPage = () => {
             </div>
           </div>
 
-          {/* Detalles */}
           <div className="md:w-1/2 space-y-6">
             <div>
               <p className="text-dukicks-blue font-semibold tracking-wide uppercase text-sm mb-2">
                 {product.category}
               </p>
-              {/* CORRECCIÓN: Usando productNameDisplay para el título principal */}
               <h1 className="text-4xl font-bold text-gray-900 mb-4">{productNameDisplay}</h1>
               
-              {/* Bloque de Precio con Descuento */}
               <div className="flex items-center space-x-3">
                 {priceDetails.isDiscounted && (
                   <p className="text-2xl text-gray-400 line-through">
@@ -192,7 +182,6 @@ const ProductPage = () => {
               <p>{product.description}</p>
             </div>
 
-            {/* Selector de Talla */}
             <div>
               <div className="flex justify-between items-center mb-3">
                 <span className="font-bold text-gray-900">Seleccionar Talla</span>
@@ -219,8 +208,7 @@ const ProductPage = () => {
               </div>
             </div>
 
-            {/* Selector de Cantidad */}
-            <div className="flex items-center space-x-4">
+            <div>
               <span className="font-bold text-gray-900">Cantidad</span>
               <div className="flex items-center border border-gray-300 rounded-lg">
                 <button 
@@ -239,7 +227,6 @@ const ProductPage = () => {
               </div>
             </div>
 
-            {/* Botones */}
             <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={handleAddToCart}

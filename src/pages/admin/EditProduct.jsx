@@ -25,7 +25,6 @@ const EditProduct = () => {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Definición de tallas por categoría
   const categorySizes = {
     'Hombres': ['25', '25.5', '26', '26.5', '27', '27.5', '28', '28.5', '29', '29.5', '30', '30.5', '31'],
     'Mujer': ['22', '22.5', '23', '23.5', '24', '24.5', '25', '25.5', '26', '26.5', '27'],
@@ -33,10 +32,8 @@ const EditProduct = () => {
     'Gorras': ['Unitalla']
   };
 
-  // Obtener tallas dinámicas basadas en la categoría ACTUAL
   const currentSizes = categorySizes[formData.category] || [];
 
-  // Cargar producto
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -45,13 +42,13 @@ const EditProduct = () => {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          // NEW: Usar 'brand' y 'model' si existen, o fallback a 'name'
+          
           setFormData({
             ...data,
             brand: data.brand || data.name, 
             model: data.model || '',
-            price: String(data.price || ''), // Aseguramos que es string para el input
-            discount: data.discount ? String(data.discount) : '0', // <-- CORREGIDO: Cargar valor 'discount'
+            price: String(data.price || ''), 
+            discount: data.discount ? String(data.discount) : '0', 
           });
           setImagePreview(data.image);
         } else {
@@ -68,13 +65,9 @@ const EditProduct = () => {
     fetchProduct();
   }, [id, navigate]);
 
-  // Manejar cambio de categoría en Edición
-  // IMPORTANTE: Aquí NO borramos las tallas automáticamente en el useEffect 
-  // porque al cargar el producto por primera vez se dispararía y borraría las tallas guardadas.
-  // Solo las borramos si el usuario cambia manualmente el select.
   const handleCategoryChange = (e) => {
     const newCategory = e.target.value;
-    // Si cambia de categoría, limpiamos tallas porque las anteriores no tendrán sentido (ej: pasar de Gorra a Tenis)
+    
     setFormData({ 
       ...formData, 
       category: newCategory,
@@ -119,10 +112,9 @@ const EditProduct = () => {
       
       await updateDoc(productRef, {
         ...formData,
-        // NEW: Concatena brand y model para el campo 'name'
         name: `${formData.brand} ${formData.model}`.trim(),
         price: parseFloat(formData.price),
-        discount: parseFloat(formData.discount) || 0, // <-- CORREGIDO: Usando 'discount'
+        discount: parseFloat(formData.discount) || 0, 
         image: imageUrl,
         updatedAt: new Date()
       });
@@ -147,7 +139,6 @@ const EditProduct = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* NEW: Marca y Modelo en lugar de Nombre */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Marca / Modelo</label>
             <div className="grid grid-cols-2 gap-4">
@@ -185,13 +176,12 @@ const EditProduct = () => {
               />
             </div>
 
-            {/* NUEVO CAMPO: Porcentaje de Descuento */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Descuento (%)</label>
               <input
                 type="number"
-                name="discount" // <-- CORREGIDO: Usando 'discount'
-                value={formData.discount} // <-- CORREGIDO: Usando 'discount'
+                name="discount" 
+                value={formData.discount} 
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
                 placeholder="0"
@@ -208,7 +198,7 @@ const EditProduct = () => {
           <select
             name="category"
             value={formData.category}
-            onChange={handleCategoryChange} // Usamos el handler especial
+            onChange={handleCategoryChange} 
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dukicks-blue outline-none"
           >
             <option value="Hombres">Hombres</option>
@@ -230,7 +220,6 @@ const EditProduct = () => {
           />
         </div>
 
-        {/* TALLAS DINÁMICAS */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Tallas Disponibles ({formData.category})

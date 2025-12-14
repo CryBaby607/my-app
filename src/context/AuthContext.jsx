@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       
       if (currentUser) {
-        // 1. Si el usuario se loguea, buscamos su rol en la colección 'staff'
         try {
           const docRef = doc(db, "staff", currentUser.uid);
           const docSnap = await getDoc(docRef);
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }) => {
           if (docSnap.exists()) {
             setUserRole(docSnap.data().role);
           } else {
-            // Si entra con Google/Email pero no está en 'staff', no tiene rol
             setUserRole('guest'); 
           }
           setUser(currentUser);
@@ -36,7 +34,6 @@ export const AuthProvider = ({ children }) => {
           setUserRole(null);
         }
       } else {
-        // 2. Si se desconecta
         setUser(null);
         setUserRole(null);
       }

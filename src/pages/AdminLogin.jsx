@@ -24,9 +24,7 @@ const AdminLogin = () => {
     setIsLoading(true);
     
     try {
-      // Login Real con Firebase
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      // Si funciona, el AuthContext detectará el cambio y redirigirá si es necesario
       navigate('/admin/dashboard');
     } catch (error) {
       console.error(error);

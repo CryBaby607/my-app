@@ -52,22 +52,16 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
-            // 1. Obtener Productos (Catálogo)
             const productsSnapshot = await getDocs(collection(db, "products"));
             const productsCount = productsSnapshot.size;
             
-            // 2. Obtener Órdenes/Cotizaciones
             const ordersSnapshot = await getDocs(query(collection(db, "whatsappOrders"), orderBy("timestamp", "desc"), limit(100)));
             const allOrders = ordersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // 3. Procesar Datos
-            
-            // Estadísticas y Revenue (solo órdenes Completadas)
             const completedOrders = allOrders.filter(order => order.status === 'Completado');
             const revenue = completedOrders.reduce((sum, order) => sum + order.total, 0);
             const totalCompletedOrdersCount = completedOrders.length;
             
-            // Datos para Gráfico de Ventas (Revenue)
             const monthlyRevenue = {};
             completedOrders.forEach(order => {
                 const date = new Date(order.timestamp);
@@ -78,7 +72,6 @@ const Dashboard = () => {
             const salesLabels = Object.keys(monthlyRevenue);
             const salesDataValues = Object.values(monthlyRevenue);
 
-            // Gráfico de Categorías
             const categoryBreakdown = {};
             completedOrders.forEach(order => {
                 order.items.forEach(item => {
@@ -90,10 +83,8 @@ const Dashboard = () => {
             const categoryLabels = Object.keys(categoryBreakdown);
             const categoryDataValues = Object.values(categoryBreakdown);
 
-            // Órdenes Recientes (las últimas 5)
             const recent = allOrders.slice(0, 5);
             
-            // 4. Actualizar Estados
             setStats(prev => ({
                 ...prev,
                 orders: { ...prev.orders, value: String(totalCompletedOrdersCount) },
@@ -158,7 +149,6 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -172,7 +162,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
         {quickActions.map((action, index) => (
           <Link
@@ -188,9 +177,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales Chart */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Revenue Mensual (Órdenes Completadas)</h3>
@@ -218,7 +205,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Categories Chart */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Distribución por Categoría</h3>
           <div className="h-64">
@@ -235,7 +221,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Orders */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -289,7 +274,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-xl">
           <div className="flex items-center justify-between">

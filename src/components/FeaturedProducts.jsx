@@ -12,19 +12,15 @@ const FeaturedProducts = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        // 1. Referencia a la colección
         const productsRef = collection(db, "products");
         
-        // 2. Query: Traer hasta 4 productos
         const q = query(
           productsRef, 
           limit(4)
         );
 
-        // 3. Ejecutar consulta
         const querySnapshot = await getDocs(q);
         
-        // 4. Formatear datos
         const productsData = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
@@ -81,13 +77,11 @@ const FeaturedProducts = () => {
                       alt={product.name}
                       className="product-image w-full h-64 object-cover transition-transform duration-500"
                     />
-                    {/* Etiqueta de Descuento */}
                     {priceDetails.isDiscounted ? (
                         <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                             -{priceDetails.discount}%
                         </div>
                     ) : (
-                    /* Etiqueta de Nuevo (si no hay descuento) */
                     <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                       Nuevo
                     </div>
@@ -108,11 +102,9 @@ const FeaturedProducts = () => {
                   <div className="mt-auto">
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        {/* Precio Regular con tachado */}
                         {priceDetails.isDiscounted && (
                             <span className="text-sm text-gray-500 line-through block">${priceDetails.regularPrice.toFixed(2)}</span>
                         )}
-                        {/* Precio Final */}
                         <span className={`text-2xl font-bold ${priceDetails.isDiscounted ? 'text-red-500' : 'text-gray-900'}`}>
                             ${priceDetails.finalPrice.toFixed(2)}
                         </span>

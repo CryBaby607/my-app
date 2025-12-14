@@ -18,7 +18,6 @@ const CategoryPage = ({ categoryKey }) => {
       window.scrollTo(0, 0);
 
       try {
-        // 1. Mapeo de URL a nombre exacto en Firebase
         const categoryMap = {
           'hombres': 'Hombres',
           'mujeres': 'Mujer',
@@ -28,7 +27,6 @@ const CategoryPage = ({ categoryKey }) => {
 
         const targetCategory = categoryMap[categoryKey];
 
-        // 2. Consulta a Firebase
         const productsRef = collection(db, "products");
         const q = query(productsRef, where("category", "==", targetCategory));
         
@@ -39,23 +37,19 @@ const CategoryPage = ({ categoryKey }) => {
           ...doc.data()
         }));
 
-        // 3. Ordenamiento (lo hacemos en el cliente para evitar crear índices complejos en Firebase por ahora)
         if (sortOption === 'price-asc') {
           fetchedItems.sort((a, b) => {
-            // Se calcula el precio final para ordenar correctamente
-            const priceA = getPriceDetails(a.price, a.discount).finalPrice; // <-- CORREGIDO: Usando a.discount
-            const priceB = getPriceDetails(b.price, b.discount).finalPrice; // <-- CORREGIDO: Usando b.discount
+            const priceA = getPriceDetails(a.price, a.discount).finalPrice; 
+            const priceB = getPriceDetails(b.price, b.discount).finalPrice; 
             return priceA - priceB;
           });
         } else if (sortOption === 'price-desc') {
             fetchedItems.sort((a, b) => {
-            // Se calcula el precio final para ordenar correctamente
-            const priceA = getPriceDetails(a.price, a.discount).finalPrice; // <-- CORREGIDO: Usando a.discount
-            const priceB = getPriceDetails(b.price, b.discount).finalPrice; // <-- CORREGIDO: Usando b.discount
+            const priceA = getPriceDetails(a.price, a.discount).finalPrice; 
+            const priceB = getPriceDetails(b.price, b.discount).finalPrice; 
             return priceB - priceA;
           });
         } else if (sortOption === 'recent') {
-           // Si tienes fecha, podrías ordenar por fecha aquí
            // fetchedItems.sort((a, b) => b.createdAt - a.createdAt);
         }
 
@@ -99,7 +93,7 @@ const CategoryPage = ({ categoryKey }) => {
           ) : items.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {items.map((product) => {
-                const priceDetails = getPriceDetails(product.price, product.discount); // <-- CORREGIDO: Usando product.discount
+                const priceDetails = getPriceDetails(product.price, product.discount); 
 
                 return (
                 <Link 
@@ -123,7 +117,6 @@ const CategoryPage = ({ categoryKey }) => {
                   <div className="p-5">
                     <p className="text-sm text-gray-500 mb-1">{product.category}</p>
                     <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">
-                      {/* NEW: Mostrar nombre concatenado */}
                       {`${product.brand || product.name} ${product.model || ''}`.trim()}
                     </h3>
                     <div className="flex items-center space-x-2">
