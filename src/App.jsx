@@ -9,6 +9,7 @@ import Dashboard from './pages/admin/Dashboard';
 import NewProduct from './pages/admin/NewProduct';
 import ProductsList from './pages/admin/ProductsList';
 import EditProduct from './pages/admin/EditProduct';
+import OrdersList from './pages/admin/OrdersList'; // AGREGADO
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Importa los componentes de la tienda pública
@@ -55,7 +56,7 @@ function App() {
           <Route path="products/new" element={<NewProduct />} />
           <Route path="products" element={<ProductsList />} />
           <Route path="products/edit/:id" element={<EditProduct />} />
-          <Route path="orders" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Pedidos</h2></div>} />
+          <Route path="orders" element={<OrdersList />} /> {/* RUTA DE ÓRDENES ACTUALIZADA */}
           <Route path="customers" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Clientes</h2></div>} />
           <Route path="categories" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Categorías</h2></div>} />
           <Route path="inventory" element={<div className="p-6"><h2 className="text-2xl font-bold mb-4">Gestión de Inventario</h2></div>} />

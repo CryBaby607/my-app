@@ -3,22 +3,48 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
+import { db } from '../firebase/config';
+import { collection, addDoc } from 'firebase/firestore'; 
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? 10.00 : 0;
+  const shipping = subtotal > 0 ? 10.00 : 0; // Envío solo si hay productos
   const total = subtotal + shipping;
 
   // Función para generar el link de WhatsApp con el pedido
-  const handleWhatsAppCheckout = () => {
+  const handleWhatsAppCheckout = async () => {
     if (cartItems.length === 0) return;
+
+    // --- LÓGICA PARA GUARDAR EN FIREBASE ---
+    const orderItemsData = cartItems.map(item => ({
+        id: item.id,
+        // Aseguramos el nombre completo del producto
+        name: `${item.brand || item.name || ''} ${item.model || ''}`.trim(), 
+        size: item.size,
+        quantity: item.quantity,
+        price: item.price,
+        category: item.category, 
+        image: item.image
+    }));
+
+    const orderData = {
+        items: orderItemsData,
+        subtotal: subtotal,
+        shipping: shipping,
+        total: total,
+        timestamp: Date.now(),
+        status: 'Cotización Pendiente', // Estado inicial
+        checkoutMethod: 'WhatsApp (Carrito)'
+    };
+    
+    // ------------------------------------------
 
     let message = "Hola DUKICKS, he preparado un pedido en la web. Aquí están los detalles para cotizar:%0A%0A";
     
-    cartItems.forEach(item => {
-      // El precio del item ya es el precio final con descuento, si aplica
+    orderItemsData.forEach(item => {
+      // Usamos el nombre asegurado del array orderItemsData
       message += `- ${item.quantity}x ${item.name} (Talla: ${item.size}) - $${item.price.toFixed(2)} c/u%0A`; 
     });
     
@@ -29,9 +55,17 @@ const CartPage = () => {
     message += `*Total estimado: $${total.toFixed(2)}*%0A%0A`;
     message += `Por favor, ayúdame a completar mi pedido.`;
 
-    // Reemplaza el número con el real de la tienda
-    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    try {
+        await addDoc(collection(db, "whatsappOrders"), orderData); // Guardamos la cotización
+        
+        // Reemplaza el número con el real de la tienda
+        const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        
+    } catch (error) {
+        console.error("Error guardando orden de WhatsApp:", error);
+        alert("Hubo un error al procesar tu pedido. Intenta nuevamente.");
+    }
   };
 
   return (
@@ -66,11 +100,11 @@ const CartPage = () => {
                     <p className="text-gray-500 text-sm mb-2">Talla: {item.size}</p>
                     {/* Bloque de Precio con Descuento */}
                     <div className="flex items-center space-x-2">
-                        {item.discount > 0 && ( 
+                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
                             <span className="text-gray-500 text-base line-through">${item.regularPrice.toFixed(2)}</span>
                         )}
                         <div className="text-dukicks-blue font-bold text-xl">${item.price.toFixed(2)}</div>
-                        {item.discount > 0 && ( 
+                        {item.discount > 0 && ( // <-- CORREGIDO: Usando item.discount
                             <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded-full">{item.discount}% OFF</span>
                         )}
                     </div>

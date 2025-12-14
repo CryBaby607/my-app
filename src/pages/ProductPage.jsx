@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { db } from '../firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore'; // AGREGADO collection y addDoc
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getPriceDetails } from '../utils/productUtils';
 
@@ -24,10 +24,13 @@ const ProductPage = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
+        // 1. Referencia al documento específico por ID
         const docRef = doc(db, "products", id);
+        // 2. Obtener el documento
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+          // 3. Guardar datos en el estado
           setProduct({ id: docSnap.id, ...docSnap.data() });
         } else {
           console.error("Producto no encontrado en Firebase");
@@ -42,7 +45,7 @@ const ProductPage = () => {
 
     fetchProduct();
   }, [id]);
-
+  
   const productNameDisplay = product 
     ? `${product.brand || product.name || ''} ${product.model || ''}`.trim() 
     : '';
@@ -53,11 +56,13 @@ const ProductPage = () => {
       return;
     }
     
+    // CORRECCIÓN: Creamos un objeto con el nombre compuesto asegurado para el carrito
     const productForCart = {
       ...product,
-      name: productNameDisplay || 'Producto sin nombre'
+      name: productNameDisplay || product.name || 'Producto sin nombre'
     };
 
+    // Pasamos el producto corregido al contexto
     addToCart(productForCart, quantity, selectedSize);
     
     setBtnText('¡Agregado!');
@@ -66,7 +71,7 @@ const ProductPage = () => {
     }, 2000);
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => { // HECHO ASYNC
     if (!selectedSize) {
       alert('Por favor selecciona una talla para continuar');
       return;
@@ -78,9 +83,30 @@ const ProductPage = () => {
     const quantityVal = quantity;
     const itemSubtotal = finalPrice * quantityVal;
     
+    // Aplicamos el costo de envío fijo para la cotización de compra directa
     const shippingCost = 10.00;
     const finalTotal = itemSubtotal + shippingCost;
     
+    // --- LÓGICA PARA GUARDAR EN FIREBASE ---
+    const orderData = {
+        items: [{
+            id: product.id,
+            name: productNameDisplay, 
+            size: selectedSize,
+            quantity: quantityVal,
+            price: finalPrice,
+            category: product.category, 
+            image: product.image
+        }],
+        subtotal: itemSubtotal,
+        shipping: shippingCost,
+        total: finalTotal,
+        timestamp: Date.now(),
+        status: 'Cotización Pendiente', // Estado inicial
+        checkoutMethod: 'WhatsApp (Directo)'
+    };
+    // ------------------------------------------
+
     const message = `Hola DUKICKS, me gustaría cotizar la compra inmediata de este producto:%0A%0A` +
       `- ${quantityVal}x ${productNameDisplay} (Talla: ${selectedSize}) - $${finalPrice.toFixed(2)} c/u%0A%0A` +
       `Subtotal: $${itemSubtotal.toFixed(2)}%0A` +
@@ -88,8 +114,15 @@ const ProductPage = () => {
       `*Total estimado: $${finalTotal.toFixed(2)}*%0A%0A` +
       `Por favor, confirma disponibilidad y el proceso de pago.`;
 
-    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    try {
+        await addDoc(collection(db, "whatsappOrders"), orderData); // Guardamos la cotización
+        
+        const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    } catch (error) {
+        console.error("Error guardando orden de WhatsApp:", error);
+        alert("Hubo un error al procesar tu pedido. Intenta nuevamente.");
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" /></div>;
@@ -101,7 +134,8 @@ const ProductPage = () => {
     </div>
   );
 
-  const priceDetails = getPriceDetails(product.price, product.discount);
+  const priceDetails = getPriceDetails(product.price, product.discount); // Usando product.discount
+  
 
   return (
     <div className="bg-white text-gray-800 min-h-screen flex flex-col">
@@ -116,6 +150,7 @@ const ProductPage = () => {
             {product.category}
           </Link>
           <span className="mx-2">/</span>
+          {/* CORRECCIÓN: Usando productNameDisplay para el breadcrumb */}
           <span className="text-gray-900 font-medium">{productNameDisplay}</span>
         </div>
 
@@ -125,7 +160,7 @@ const ProductPage = () => {
             <div className="rounded-3xl overflow-hidden shadow-lg border border-gray-100 bg-gray-50 aspect-w-1 aspect-h-1">
               <img 
                 src={product.image} 
-                alt={productNameDisplay} 
+                alt={product.name} 
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
@@ -137,8 +172,10 @@ const ProductPage = () => {
               <p className="text-dukicks-blue font-semibold tracking-wide uppercase text-sm mb-2">
                 {product.category}
               </p>
+              {/* CORRECCIÓN: Usando productNameDisplay para el título principal */}
               <h1 className="text-4xl font-bold text-gray-900 mb-4">{productNameDisplay}</h1>
               
+              {/* Bloque de Precio con Descuento */}
               <div className="flex items-center space-x-3">
                 {priceDetails.isDiscounted && (
                   <p className="text-2xl text-gray-400 line-through">
